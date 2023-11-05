@@ -13,12 +13,24 @@ class Customer:
     return f"Address: {self.address} / Phone Number: {self.phoneNumber} / Email Address: {self.email}"
     # This method can be deleted if we need to get address, phoneNumber, and email separately
 
-  def addRental(self, Video)
+  def addRental(self, Video):
     self.currentRentals.append(Video)
     self.rentalHistory.append(Video)
 
-  def removeRental(self, Video)
+  def removeRental(self, Video):
     try:
       self.currentRentals.remove(Video)
     except:
       print("Video not found in list")
+
+  def getFirstName(self):
+    return self.firstName
+
+  def getLastName(self):
+    return self.lastName
+
+  def getCurrentRentals(self):
+    return self.currentRentals
+
+  def getRentalHistory(self):
+    return self.rentalHistory
