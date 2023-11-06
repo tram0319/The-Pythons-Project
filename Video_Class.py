@@ -15,7 +15,7 @@ class Video:
         """
         self.rentalStatus = str(rentalStatus)
         
-        
+         
         
     def getName(self):
         return self.name
