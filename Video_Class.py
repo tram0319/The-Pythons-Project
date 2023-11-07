@@ -15,7 +15,7 @@ class Video:
         """
         self.rentalStatus = str(rentalStatus)
         
-        
+         
         
     def getName(self):
         return self.name
@@ -34,3 +34,22 @@ class Video:
         
     def getRentalStatus(self):
         return self.rentalStatus
+
+
+    def editName(self, name):
+        self.name = name
+
+    def editYear(self, year):
+        self.year = year
+
+    def editDirector(self, director):
+        self.director = director
+
+    def editRating(self, rating):
+        self.rating = rating
+
+    def editGenre(self, genre):
+        self.genre = genre
+
+    def editRentalStatus(self, rentalStatus):
+        self.rentalStatus = rentalStatus
