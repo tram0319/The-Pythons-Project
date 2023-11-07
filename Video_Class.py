@@ -13,7 +13,7 @@ class Video:
         Should rental status be innitalized as not rented?
         Would that save time?
         """
-        self.rentalStatus = str(rentalStatus)
+        self.rentalStatus = str(rentalStatus) 
         
          
         
