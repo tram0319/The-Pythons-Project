@@ -13,7 +13,7 @@ class Video:
         Should rental status be innitalized as not rented?
         Would that save time?
         """
-        self.rentalStatus = str(rentalStatus)
+        self.rentalStatus = str(rentalStatus) 
         
          
         
@@ -34,3 +34,22 @@ class Video:
         
     def getRentalStatus(self):
         return self.rentalStatus
+
+
+    def editName(self, name):
+        self.name = name
+
+    def editYear(self, year):
+        self.year = year
+
+    def editDirector(self, director):
+        self.director = director
+
+    def editRating(self, rating):
+        self.rating = rating
+
+    def editGenre(self, genre):
+        self.genre = genre
+
+    def editRentalStatus(self, rentalStatus):
+        self.rentalStatus = rentalStatus
