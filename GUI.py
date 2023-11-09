@@ -55,12 +55,12 @@ tk.Label(rental, text="Rental Information").pack()
 def on_scroll(*args):
     t1.yview(*args)
     t2.yview(*args)
-#list of customerId, customer name,
+#list of customer name,....
 t1=tk.Listbox(rental, width=35, height=10).pack(side="left")
 t1_scrollbar = tk.Scrollbar(rental, orient="vertical")
 t1_scrollbar.pack(side="left", fill="y")
 
-#list of videoid, name video, curent rental status
+#list of video name, curent rental status
 t2=tk.Listbox(rental, width=35, height=10).pack(side="left")
 t2_scrollbar = tk.Scrollbar(rental, orient="vertical")
 t2_scrollbar.pack(side="left", fill="y")
