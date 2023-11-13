@@ -28,6 +28,12 @@ class TestInventoryList(unittest.TestCase):
         inventory.add_video("Movie", 2018, "Jane Doe", 7, "Action", "Available")
         filteredList = inventory.get_inventory_list_by_attribute("Action")
         self.assertEqual(filteredList[0].name, "Movie")
+
+        inventory = Inventory_List_Class.Inventory_List()
+        inventory.add_video("Test", 2020, "John Doe", 5, "Comedy", "Available")
+        inventory.add_video("Movie", 2018, "Jane Doe", 7, "Action", "Available")
+        filteredList = inventory.get_inventory_list_by_attribute("5")
+        self.assertEqual(filteredList[0].name, "Test")
         
     def test_sort_inventory(self):
         inventory = Inventory_List_Class.Inventory_List()
