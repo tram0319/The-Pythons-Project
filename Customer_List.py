@@ -26,6 +26,13 @@ class Customer_List:
     def get_cust_list(self):
         return self.cust_list
 
+    def get_cust_list_by_attribute(self, attribute):
+        matching_customers = []
+        for customer in self.cust_list:
+            if attribute in customer.firstName or attribute in customer.lastName or attribute in customer.email or attribute in customer.address:
+                matching_customers.append(customer)
+        return matching_customers
+
     def sort_cust(self, attribute, order='asc'):
         reverse = False if order == 'asc' else True
         self.cust_list.sort(key=lambda x: getattr(x, attribute), reverse=reverse)
