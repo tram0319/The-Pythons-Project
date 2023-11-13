@@ -21,10 +21,6 @@ class Inventory_List():
                 return f'Removed: {name} from inventory.'
         return 'Video not found in inventory'
 
-    def sort_inventory(self, kind):
-        if kind == 'Ascending':
-            return sorted(self.inventory_list, reverse=False)
-        elif kind == 'Descending':
-            return sorted(self.inventory_list, reverse=True)
-        else:
-            return 'Must specify Ascending or Descending'
+    def sort_inventory(self, attribute, order='asc'):
+        reverse = False if order == 'asc' else True
+        self.inventory_list.sort(key=lambda x: getattr(x, attribute), reverse=reverse)
