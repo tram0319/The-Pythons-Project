@@ -4,7 +4,7 @@ class Video:
         self.name = str(name)
         self.year = int(year)
         self.director = str(director)
-        self.rating = float(rating)
+        self.rating = int(rating)
         self.genre = str(genre)
         self.rentalStatus = str(rentalStatus)
         
