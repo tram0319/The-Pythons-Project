@@ -12,7 +12,6 @@ class Customer:
 
   def addRental(self, Video):
     self.currentRentals.append(Video)
-    self.rentalHistory.append(Video)
 
   def removeRental(self, Video):
     try:
