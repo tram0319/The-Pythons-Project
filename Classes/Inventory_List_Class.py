@@ -24,7 +24,7 @@ class Inventory_List():
     def get_inventory_list_by_attribute(self, attribute):
         matching_inventory = []
         for video in self.inventory_list:
-            if attribute in video.name or attribute in video.genre or attribute in video.year or attribute in video.director or attribute in video.rating:
+            if attribute in video.name or attribute in video.genre or attribute in str(video.year) or attribute in video.director or attribute in str(video.rating):
                 matching_inventory.append(video)
         return matching_inventory
 
