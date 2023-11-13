@@ -25,3 +25,8 @@ class Customer_List:
 
     def get_cust_list(self):
         return self.cust_list
+
+    def sort_cust(self, attribute, order='asc'):
+        reverse = False if order == 'asc' else True
+        self.cust_list.sort(key=lambda x: getattr(x, attribute), reverse=reverse)
+
