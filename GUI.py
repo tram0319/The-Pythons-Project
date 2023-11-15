@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
+import re
 
 root = tk.Tk()
 root.title('Inventory System for Blockbuster Video')
@@ -36,6 +37,29 @@ customer_list.grid(row=1, column=0, padx=10, pady=5, rowspan=4)
 # Original customer data (for filtering purposes)
 original_customer_data = []
 
+regex1 = r'^[1-9]\d{2}-\d{3}-\d{4}$'
+def valid_phone(x):
+    phone = x.get()
+    if not phone:
+        messagebox.showerror("Error", "Phone number cannot be empty")
+        return False
+    elif not(re.match(regex1, phone)):
+        messagebox.showerror("Error", "Invalid phone number.")
+        return False
+    return True
+
+
+regex = r"^\S+@\S+\.\S+$"
+def valid_email(y):
+    email = y.get()
+    if not email:
+        messagebox.showerror("Error", "Email cannot be empty")
+        return False
+    elif not (re.fullmatch(regex, email)):
+        messagebox.showerror("Error", "Invalid email address.")
+        return False
+    return True
+
 # Buttons in customer frame
 def add_customer():
     # Function to be executed when "Add Customer" button is clicked
@@ -66,11 +90,12 @@ def add_customer():
     
     
     def save_customer():
-        first_name = fName_entry.get()
-        last_name = lName_entry.get()
-        customer_address = address_entry.get()
-        customer_phone = phone_entry.get()
-        customer_email = email_entry.get()
+        if valid_phone(phone_entry) and valid_email(email_entry):
+            first_name = fName_entry.get()
+            last_name = lName_entry.get()
+            customer_address = address_entry.get()
+            customer_phone = phone_entry.get()
+            customer_email = email_entry.get()
         
         customer_list.insert(tk.END, f"{first_name} - {last_name} - {customer_address} - {customer_phone} - {customer_email}")
 
