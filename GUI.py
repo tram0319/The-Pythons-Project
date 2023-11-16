@@ -31,13 +31,13 @@ notebook.add(returnn, text='Return')
 tk.Label(customer, text="Customer Information").grid(row=0, column=0, columnspan=2, pady=5)
 
 # List of customers
-customer_list = tk.Listbox(customer, width=50, height=10)
+customer_list = tk.Listbox(customer, width=75, height=20)
 customer_list.grid(row=1, column=0, padx=10, pady=5, rowspan=4)
 
 # Original customer data (for filtering purposes)
 original_customer_data = []
 
-regex1 = r'^[1-9]\d{2}-\d{3}-\d{4}$'
+regex1 = r'^[1-9]\d{2}\d{3}\d{4}$'
 def valid_phone(x):
     phone = x.get()
     if not phone:
@@ -254,7 +254,7 @@ tk.Button(customer, text="Filter By", command=filter_by).grid(row=4, column=1, s
 tk.Label(video, text="Video Information").grid(row=0, column=0, columnspan=2, pady=5)
 
 #list of videos
-video_list = tk.Listbox(video, width=50, height=10)
+video_list = tk.Listbox(video, width=75, height=20)
 video_list.grid(row=1, column=0, padx=10, pady=5, rowspan=4)
 
 # Original video data (for filtering purposes)
