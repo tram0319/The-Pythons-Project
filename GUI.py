@@ -120,12 +120,12 @@ def add_customer():
             customer_phone = phone_entry.get()
             customer_email = email_entry.get()
         
-        customer_list.insert(tk.END, f"{first_name} - {last_name} - {customer_address} - {customer_phone} - {customer_email}")
+            customer_list.insert(tk.END, f"{first_name.capitalize()} {last_name.capitalize()} - {customer_address} - {customer_phone} - {customer_email}")
 
-        # Update the original_customer_data list
-        original_customer_data.append(f"{first_name} - {last_name} - {customer_address} - {customer_phone} - {customer_email}")
+            # Update the original_customer_data list
+            original_customer_data.append(f"{first_name.capitalize()} {last_name.capitalize()} - {customer_address} - {customer_phone} - {customer_email}")
 
-        add_window.destroy()
+            add_window.destroy()
     
     tk.Button(add_window, text="Save", command=save_customer).grid(row=5, column=0, columnspan=2, pady=10)
 
@@ -190,23 +190,24 @@ def edit_customer():
     # Function to save edited customer information
     def save_edited_customer():
         # Get values from entry fields
-        edited_first_name = fName_entry.get()
-        edited_last_name = lName_entry.get()
-        edited_address = address_entry.get()
-        edited_phone = phone_entry.get()
-        edited_email = email_entry.get()
+        if valid_fName(fName_entry) and valid_lName(lName_entry) and valid_phone(phone_entry) and valid_email(email_entry):
+            edited_first_name = fName_entry.get()
+            edited_last_name = lName_entry.get()
+            edited_address = address_entry.get()
+            edited_phone = phone_entry.get()
+            edited_email = email_entry.get()
 
-        # Perform any validation or processing needed
+            # Perform any validation or processing needed
 
-        # Update the customer_list with the edited customer information
-        customer_list.delete(selected_index)
-        customer_list.insert(tk.END, f"{edited_first_name} - {edited_last_name} - {edited_address} - {edited_phone} - {edited_email}")
+            # Update the customer_list with the edited customer information
+            customer_list.delete(selected_index)
+            customer_list.insert(tk.END, f"{edited_first_name.capitalize()} {edited_last_name.capitalize()} - {edited_address} - {edited_phone} - {edited_email}")
 
-        original_customer_data.pop(selected_index)
-        original_customer_data.append( f"{edited_first_name} - {edited_last_name} - {edited_address} - {edited_phone} - {edited_email}")
+            original_customer_data.pop(selected_index)
+            original_customer_data.append( f"{edited_first_name.capitalize()} {edited_last_name.capitalize()} - {edited_address} - {edited_phone} - {edited_email}")
 
-        # Close the edit_window
-        edit_window.destroy()
+            # Close the edit_window
+            edit_window.destroy()
 
     # Button to save edited customer information
     tk.Button(edit_window, text="Save", command=save_edited_customer).grid(row=5, column=0, columnspan=2, pady=10)
