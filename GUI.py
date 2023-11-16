@@ -60,6 +60,29 @@ def valid_email(y):
         return False
     return True
 
+
+def valid_fName(fn):
+    fName = fn.get()
+    if not fName:
+        messagebox.showerror("Error", "First name cannot be empty")
+        return False
+    elif not fName.isalpha():
+        messagebox.showerror("Error", "Invalid first name.")
+        return False
+    return True
+
+
+def valid_lName(ln):
+    lName = ln.get()
+    if not lName:
+        messagebox.showerror("Error", "Last name cannot be empty")
+        return False
+    elif not lName.isalpha():
+        messagebox.showerror("Error", "Invalid last name.")
+        return False
+    return True
+
+
 # Buttons in customer frame
 def add_customer():
     # Function to be executed when "Add Customer" button is clicked
@@ -90,7 +113,7 @@ def add_customer():
     
     
     def save_customer():
-        if valid_phone(phone_entry) and valid_email(email_entry):
+        if valid_fName(fName_entry) and valid_lName(lName_entry) and valid_phone(phone_entry) and valid_email(email_entry):
             first_name = fName_entry.get()
             last_name = lName_entry.get()
             customer_address = address_entry.get()
