@@ -37,7 +37,7 @@ customer_list.grid(row=1, column=0, padx=10, pady=5, rowspan=4)
 # Original customer data (for filtering purposes)
 original_customer_data = []
 
-regex1 = r'^[1-9]\d{2}-\d{3}-\d{4}$'
+regex1 = r'^[1-9]\d{2}\d{3}\d{4}$'
 def valid_phone(x):
     phone = x.get()
     if not phone:
