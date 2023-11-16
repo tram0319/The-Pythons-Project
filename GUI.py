@@ -66,7 +66,7 @@ def valid_fName(fn):
     if not fName:
         messagebox.showerror("Error", "First name cannot be empty")
         return False
-    elif not fName.isalpha():
+    elif not fName.isalpha() or " " in fName:
         messagebox.showerror("Error", "Invalid first name.")
         return False
     return True
@@ -77,7 +77,7 @@ def valid_lName(ln):
     if not lName:
         messagebox.showerror("Error", "Last name cannot be empty")
         return False
-    elif not lName.isalpha():
+    elif not lName.isalpha() or " " in lName:
         messagebox.showerror("Error", "Invalid last name.")
         return False
     return True
