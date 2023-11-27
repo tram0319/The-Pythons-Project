@@ -3,6 +3,14 @@ from tkinter import ttk
 from tkinter import messagebox
 import re
 
+import Inventory_List_Class
+import Customer_List_Class
+import Video_Class
+import Customer_Class
+
+InventoryList = Inventory_List_Class.Inventory_List()
+CustomerList = Customer_List_Class.Customer_List()
+
 root = tk.Tk()
 root.title('Inventory System for Blockbuster Video')
 
@@ -297,6 +305,7 @@ def add_video():
         rating = rating_entry.get()
 
         video_list.insert(tk.END, f"{title} - {year} - {director} - {genre} - {rating}")
+        InventoryList.add_video(title, year, director, rating, genre, "Available")
 
         # Update the original_video_data list
         original_video_data.append(f"{title} - {year} - {director} - {genre} - {rating}")
@@ -319,6 +328,7 @@ def remove_video():
     confirmation = messagebox.askokcancel("Confirm Deletion", f"Do you want to remove the video:\n{video_name}")
 
     if confirmation:
+        InventoryList.remove_video(video_name)
         video_list.delete(selected_index)
 
         # Remove the video from the original_video_data list
@@ -376,7 +386,10 @@ def edit_video():
 
         # Update the video_list with the edited video information
         video_list.delete(selected_index)
+        InventoryList.remove_video(video_list.get(selected_index))
+        
         video_list.insert(tk.END, f"{edited_title} - {edited_year} - {edited_director} - {edited_genre} - {edited_rating}")
+        InventoryList.add_video(edited_title, edited_year, edited_director, edited_rating, edited_genre, "Available")
 
         original_video_data.pop(selected_index)
         original_video_data.append( f"{edited_title} - {edited_year} - {edited_director} - {edited_genre} - {edited_rating}")
