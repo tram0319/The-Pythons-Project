@@ -3,6 +3,14 @@ from tkinter import ttk
 from tkinter import messagebox
 import re
 
+import Inventory_List_Class
+import Customer_List_Class
+import Video_Class
+import Customer_Class
+
+InventoryList = Inventory_List_Class.Inventory_List()
+CustomerList = Customer_List_Class.Customer_List()
+
 root = tk.Tk()
 root.title('Inventory System for Blockbuster Video')
 
@@ -81,7 +89,16 @@ def valid_lName(ln):
         messagebox.showerror("Error", "Invalid last name.")
         return False
     return True
+    
+def update_t1_with_customer_list():
+    t1.delete(0, tk.END)  # Clear the current list in t1
+    for item in customer_list.get(0, tk.END):
+        t1.insert(tk.END, item)
 
+def update_t2_with_video_list():
+    t2.delete(0, tk.END)  # Clear the current list in t2
+    for item in video_list.get(0, tk.END):
+        t2.insert(tk.END, item)
 
 # Buttons in customer frame
 def add_customer():
@@ -125,6 +142,9 @@ def add_customer():
             # Update the original_customer_data list
             original_customer_data.append(f"{first_name.capitalize()} {last_name.capitalize()} - {customer_address} - {customer_phone} - {customer_email}")
 
+            # Call the function to update t1 with the same data as customer_list
+            update_t1_with_customer_list()
+            
             add_window.destroy()
     
     tk.Button(add_window, text="Save", command=save_customer).grid(row=5, column=0, columnspan=2, pady=10)
@@ -147,6 +167,8 @@ def remove_customer():
 
         # Remove the customer from the original_customer_data list
         original_customer_data.pop(selected_index)
+
+        update_t1_with_customer_list()
 
 def edit_customer():
     # Function to be executed when "Edit Customer" button is clicked
@@ -206,6 +228,8 @@ def edit_customer():
             original_customer_data.pop(selected_index)
             original_customer_data.append( f"{edited_first_name.capitalize()} {edited_last_name.capitalize()} - {edited_address} - {edited_phone} - {edited_email}")
 
+            update_t1_with_customer_list()
+            
             # Close the edit_window
             edit_window.destroy()
 
@@ -297,10 +321,13 @@ def add_video():
         rating = rating_entry.get()
 
         video_list.insert(tk.END, f"{title} - {year} - {director} - {genre} - {rating}")
+        InventoryList.add_video(title, year, director, rating, genre, "Available")
 
         # Update the original_video_data list
         original_video_data.append(f"{title} - {year} - {director} - {genre} - {rating}")
 
+        update_t2_with_video_list()
+        
         add_window.destroy()
 
     tk.Button(add_window, text="Save", command=save_video).grid(row=5, column=0, columnspan=2, pady=10)
@@ -319,10 +346,13 @@ def remove_video():
     confirmation = messagebox.askokcancel("Confirm Deletion", f"Do you want to remove the video:\n{video_name}")
 
     if confirmation:
+        InventoryList.remove_video(video_name)
         video_list.delete(selected_index)
 
         # Remove the video from the original_video_data list
         original_video_data.pop(selected_index)
+
+        update_t2_with_video_list()
 
 def edit_video():
     # Function to be executed when "Edit Video" button is clicked
@@ -376,11 +406,16 @@ def edit_video():
 
         # Update the video_list with the edited video information
         video_list.delete(selected_index)
+        InventoryList.remove_video(video_list.get(selected_index))
+        
         video_list.insert(tk.END, f"{edited_title} - {edited_year} - {edited_director} - {edited_genre} - {edited_rating}")
+        InventoryList.add_video(edited_title, edited_year, edited_director, edited_rating, edited_genre, "Available")
 
         original_video_data.pop(selected_index)
         original_video_data.append( f"{edited_title} - {edited_year} - {edited_director} - {edited_genre} - {edited_rating}")
 
+        update_t2_with_video_list()
+        
         # Close the edit_window
         edit_window.destroy()
 
@@ -440,14 +475,18 @@ def on_scroll2(*args):
     t4.yview(*args)
     
 #list of customer name,....
-t1=tk.Listbox(rental, width=35, height=10).pack(side="left")
-t1_scrollbar = tk.Scrollbar(rental, orient="vertical")
+t1 = tk.Listbox(rental, width=35, height=20, exportselection=False)
+t1.pack(side="left")
+t1_scrollbar = tk.Scrollbar(rental, orient="vertical", command=t1.yview)
 t1_scrollbar.pack(side="left", fill="y")
+t1.config(yscrollcommand=t1_scrollbar.set)
 
 #list of video name, curent rental status
-t2=tk.Listbox(rental, width=35, height=10).pack(side="left")
-t2_scrollbar = tk.Scrollbar(rental, orient="vertical")
+t2=tk.Listbox(rental, width=35, height=20, exportselection=False)
+t2.pack(side="left")
+t2_scrollbar = tk.Scrollbar(rental, orient="vertical", command=t2.yview)
 t2_scrollbar.pack(side="left", fill="y")
+t2.config(yscrollcommand=t2_scrollbar.set)
 
 t3=tk.Listbox(returnn, width=35, height=10).pack(side="left")
 t3_scrollbar = tk.Scrollbar(returnn, orient="vertical")

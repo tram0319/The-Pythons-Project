@@ -1,3 +1,5 @@
+from Video_Class import Video
+
 class Customer:
     
     def __init__(self, firstName, lastName, address, phoneNumber, email, currentRentals):
@@ -11,11 +13,13 @@ class Customer:
       
     
     def addRental(self, Video):
+        Video.editRentalStatus("Rented")
         self.currentRentals.append(Video)
 
     def removeRental(self, Video):
         try:
             self.currentRentals.remove(Video)
+            Video.editRentalStatus("Available")
         except:
             print("Video not found in list")
 
