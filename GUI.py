@@ -90,6 +90,64 @@ def valid_lName(ln):
         return False
     return True
     
+def valid_rating(r):
+    rating = r.get()
+    if not rating:
+        messagebox.showerror("Error", "Rating cannot be empty")
+        return False
+    elif not 1 <= int(rating) <= 10 or len(rating) != 1:
+        messagebox.showerror("Error", "Invalid rating. Please enter one digit from 1 to 10 ")
+        return False
+    return True
+
+def fname_limit(a, limit):
+    if not len(a) <= limit:
+        messagebox.showerror("Error", "Invalid first name. Maximum is 20 characters!")
+        return False
+    return True
+
+def lname_limit(b, limit):
+    if not len(b) <= limit:
+        messagebox.showerror("Error", "Invalid last name. Maximum is 20 characters!")
+        return False
+    return True
+
+def address_limit(c, limit):
+    if not len(c) <= limit:
+        messagebox.showerror("Error", "Invalid address. Maximum is 30 characters!")
+        return False
+    return True
+
+def email_limit(d, limit):
+    if not len(d) <= limit:
+        messagebox.showerror("Error", "Invalid email. Maximum is 30 characters!")
+        return False
+    return True
+
+def title_limit(e, limit):
+    if not len(e) <= limit:
+        messagebox.showerror("Error", "Invalid title. Maximum is 30 characters!")
+        return False
+    return True
+
+def year_limit(f, limit):
+    if not len(f) == limit:
+        messagebox.showerror("Error", "Invalid year. Valid year contains 4 digits!")
+        return False
+    return True
+
+def director_limit(g, limit):
+    if not len(g) <= limit:
+        messagebox.showerror("Error", "Invalid director. Maximum is 30 characters!")
+        return False
+    return True
+
+def genre_limit(h, limit):
+    if not len(h) <= limit:
+        messagebox.showerror("Error", "Invalid genre. Maximum is 20 characters!")
+        return False
+    return True   
+
 def update_t1_with_customer_list():
     t1.delete(0, tk.END)  # Clear the current list in t1
     for item in customer_list.get(0, tk.END):
@@ -130,7 +188,8 @@ def add_customer():
     
     
     def save_customer():
-        if valid_fName(fName_entry) and valid_lName(lName_entry) and valid_phone(phone_entry) and valid_email(email_entry):
+        if (valid_fName(fName_entry) and valid_lName(lName_entry) and valid_phone(phone_entry) and valid_email(email_entry) and fname_limit(fName_entry.get(),20) and lname_limit(lName_entry.get(),20)
+                and address_limit(address_entry.get(), 30) and email_limit(email_entry.get(), 30)):
             first_name = fName_entry.get()
             last_name = lName_entry.get()
             customer_address = address_entry.get()
@@ -314,21 +373,22 @@ def add_video():
     rating_entry.grid(row=4, column=1, padx=10, pady=5)
 
     def save_video():
-        title = title_entry.get()
-        year = year_entry.get()
-        director = director_entry.get()
-        genre = genre_entry.get()
-        rating = rating_entry.get()
+        if (valid_rating(rating_entry) and title_limit(title_entry.get(), 30) and year_limit(year_entry.get(), 4)and director_limit(director_entry.get(), 30) and genre_limit(genre_entry.get(), 20)):
+            title = title_entry.get()
+            year = year_entry.get()
+            director = director_entry.get()
+            genre = genre_entry.get()
+            rating = rating_entry.get()
 
-        video_list.insert(tk.END, f"{title} - {year} - {director} - {genre} - {rating}")
-        InventoryList.add_video(title, year, director, rating, genre, "Available")
+            video_list.insert(tk.END, f"{title} - {year} - {director} - {genre} - {rating}")
+            InventoryList.add_video(title, year, director, rating, genre, "Available")
 
-        # Update the original_video_data list
-        original_video_data.append(f"{title} - {year} - {director} - {genre} - {rating}")
+           # Update the original_video_data list
+            original_video_data.append(f"{title} - {year} - {director} - {genre} - {rating}")
 
-        update_t2_with_video_list()
+            update_t2_with_video_list()
         
-        add_window.destroy()
+            add_window.destroy()
 
     tk.Button(add_window, text="Save", command=save_video).grid(row=5, column=0, columnspan=2, pady=10)
 
