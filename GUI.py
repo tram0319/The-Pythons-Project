@@ -56,10 +56,9 @@ def valid_phone(x):
         return False
     return True
 
-
 regex = r"^\S+@\S+\.\S+$"
-def valid_email(y):
-    email = y.get()
+def valid_email(e):
+    email = e.get()
     if not email:
         messagebox.showerror("Error", "Email cannot be empty")
         return False
@@ -68,6 +67,12 @@ def valid_email(y):
         return False
     return True
 
+def valid_address(addr):
+    address = addr.get()
+    if not address:
+        messagebox.showerror("Error", "Address cannot be empty")
+        return False
+    return True
 
 def valid_fName(fn):
     fName = fn.get()
@@ -90,13 +95,54 @@ def valid_lName(ln):
         return False
     return True
     
+def valid_title(t):
+    title=t.get()
+    if not title:
+        messagebox.showerror("Error", "Title cannot be empty")
+        return False
+    elif not title.isalpha() or " " in title:
+        messagebox.showerror("Error", "Invalid title.")
+        return False
+    return True
+
+def valid_year(y):
+    year = y.get()
+    if not year:
+        messagebox.showerror("Error", "Year cannot be empty")
+        return False
+    elif not re.match(r"^(19\d{2}|20\d{2})$", year):
+        messagebox.showerror("Error", "Invalid year.")
+        return False
+    return True
+
+def valid_director(d):
+    director = d.get()
+    if not director:
+        messagebox.showerror("Error", "Director cannot be empty")
+        return False
+    elif not director.isalpha() or " " in director:
+        messagebox.showerror("Error", "Invalid director.")
+        return False
+    return True
+
+def valid_genre(g):
+    genre = g.get()
+    if not genre:
+        messagebox.showerror("Error", "Genre cannot be empty")
+        return False
+    elif not genre.isalpha() or " " in genre:
+        messagebox.showerror("Error", "Invalid genre.")
+        return False
+    return True
+
 def valid_rating(r):
     rating = r.get()
+    valid_ratings = ["PG", "R", "PG-13", "G"]
     if not rating:
         messagebox.showerror("Error", "Rating cannot be empty")
         return False
-    elif not 1 <= int(rating) <= 10 or len(rating) != 1:
-        messagebox.showerror("Error", "Invalid rating. Please enter one digit from 1 to 10 ")
+    elif rating not in valid_ratings:
+        messagebox.showerror("Error", "Invalid rating. Please enter G, PG, PG-13, or R.")
         return False
     return True
 
@@ -188,24 +234,22 @@ def add_customer():
     
     
     def save_customer():
-        if (valid_fName(fName_entry) and valid_lName(lName_entry) and valid_phone(phone_entry) and valid_email(email_entry) and fname_limit(fName_entry.get(),20) and lname_limit(lName_entry.get(),20)
-                and address_limit(address_entry.get(), 30) and email_limit(email_entry.get(), 30)):
+        if valid_fName(fName_entry) and valid_lName(lName_entry) and valid_phone(phone_entry) and valid_email(email_entry) and valid_address(address_entry):
             first_name = fName_entry.get()
             last_name = lName_entry.get()
             customer_address = address_entry.get()
             customer_phone = phone_entry.get()
             customer_email = email_entry.get()
         
-            customer_list.insert(tk.END, f"{first_name.capitalize()} {last_name.capitalize()} - {customer_address} - {customer_phone} - {customer_email}")
+            customer_list.insert(tk.END, f"{first_name.capitalize()} - {last_name.capitalize()} - {customer_address} - {customer_phone} - {customer_email}")
 
             # Update the original_customer_data list
-            original_customer_data.append(f"{first_name.capitalize()} {last_name.capitalize()} - {customer_address} - {customer_phone} - {customer_email}")
+            original_customer_data.append(f"{first_name.capitalize()} - {last_name.capitalize()} - {customer_address} - {customer_phone} - {customer_email}")
 
             # Call the function to update t1 with the same data as customer_list
             update_t1_with_customer_list()
             
             add_window.destroy()
-    
     tk.Button(add_window, text="Save", command=save_customer).grid(row=5, column=0, columnspan=2, pady=10)
 
 def remove_customer():
@@ -219,7 +263,8 @@ def remove_customer():
     selected_index = selected_indices[0]
 
     customer_name = customer_list.get(selected_index)
-    confirmation = messagebox.askokcancel("Confirm Deletion", f"Do you want to remove the customer:\n{customer_name}")
+    first_name = customer_name.split()[0]
+    confirmation = messagebox.askokcancel("Confirm Deletion", f"Do you want to remove the customer:\n{first_name}")
 
     if confirmation:
         customer_list.delete(selected_index)
@@ -271,7 +316,7 @@ def edit_customer():
     # Function to save edited customer information
     def save_edited_customer():
         # Get values from entry fields
-        if valid_fName(fName_entry) and valid_lName(lName_entry) and valid_phone(phone_entry) and valid_email(email_entry):
+        if valid_fName(fName_entry) and valid_lName(lName_entry) and valid_phone(phone_entry) and valid_email(email_entry) and valid_address(address_entry):
             edited_first_name = fName_entry.get()
             edited_last_name = lName_entry.get()
             edited_address = address_entry.get()
@@ -282,10 +327,10 @@ def edit_customer():
 
             # Update the customer_list with the edited customer information
             customer_list.delete(selected_index)
-            customer_list.insert(tk.END, f"{edited_first_name.capitalize()} {edited_last_name.capitalize()} - {edited_address} - {edited_phone} - {edited_email}")
+            customer_list.insert(tk.END, f"{edited_first_name.capitalize()} - {edited_last_name.capitalize()} - {edited_address} - {edited_phone} - {edited_email}")
 
             original_customer_data.pop(selected_index)
-            original_customer_data.append( f"{edited_first_name.capitalize()} {edited_last_name.capitalize()} - {edited_address} - {edited_phone} - {edited_email}")
+            original_customer_data.append( f"{edited_first_name.capitalize()} - {edited_last_name.capitalize()} - {edited_address} - {edited_phone} - {edited_email}")
 
             update_t1_with_customer_list()
             
@@ -373,7 +418,7 @@ def add_video():
     rating_entry.grid(row=4, column=1, padx=10, pady=5)
 
     def save_video():
-        if (valid_rating(rating_entry) and title_limit(title_entry.get(), 30) and year_limit(year_entry.get(), 4)and director_limit(director_entry.get(), 30) and genre_limit(genre_entry.get(), 20)):
+        if valid_title(title_entry) and valid_year(year_entry) and valid_director(director_entry) and valid_genre(genre_entry) and valid_rating(rating_entry):
             title = title_entry.get()
             year = year_entry.get()
             director = director_entry.get()
@@ -383,7 +428,7 @@ def add_video():
             video_list.insert(tk.END, f"{title} - {year} - {director} - {genre} - {rating}")
             InventoryList.add_video(title, year, director, rating, genre, "Available")
 
-           # Update the original_video_data list
+            # Update the original_video_data list
             original_video_data.append(f"{title} - {year} - {director} - {genre} - {rating}")
 
             update_t2_with_video_list()
@@ -403,7 +448,8 @@ def remove_video():
     selected_index = selected_indices[0]
 
     video_name = video_list.get(selected_index)
-    confirmation = messagebox.askokcancel("Confirm Deletion", f"Do you want to remove the video:\n{video_name}")
+    video_title = video_name.split()[0]
+    confirmation = messagebox.askokcancel("Confirm Deletion", f"Do you want to remove the video:\n{video_title}")
 
     if confirmation:
         InventoryList.remove_video(video_name)
@@ -455,29 +501,27 @@ def edit_video():
 
     # Function to save edited video information
     def save_edited_video():
-        # Get values from entry fields
-        edited_title = title_entry.get()
-        edited_year = year_entry.get()
-        edited_director = director_entry.get()
-        edited_genre = genre_entry.get()
-        edited_rating = rating_entry.get()
+        if valid_title(title_entry) and valid_year(year_entry) and valid_director(director_entry) and valid_genre(genre_entry) and valid_rating(rating_entry):
+            edited_title = title_entry.get()
+            edited_year = year_entry.get()
+            edited_director = director_entry.get()
+            edited_genre = genre_entry.get()
+            edited_rating = rating_entry.get()
 
-        # Perform any validation or processing needed
-
-        # Update the video_list with the edited video information
-        video_list.delete(selected_index)
-        InventoryList.remove_video(video_list.get(selected_index))
+            # Update the video_list with the edited video information
+            video_list.delete(selected_index)
+            InventoryList.remove_video(video_list.get(selected_index))
         
-        video_list.insert(tk.END, f"{edited_title} - {edited_year} - {edited_director} - {edited_genre} - {edited_rating}")
-        InventoryList.add_video(edited_title, edited_year, edited_director, edited_rating, edited_genre, "Available")
+            video_list.insert(tk.END, f"{edited_title} - {edited_year} - {edited_director} - {edited_genre} - {edited_rating}")
+            InventoryList.add_video(edited_title, edited_year, edited_director, edited_rating, edited_genre, "Available")
 
-        original_video_data.pop(selected_index)
-        original_video_data.append( f"{edited_title} - {edited_year} - {edited_director} - {edited_genre} - {edited_rating}")
+            original_video_data.pop(selected_index)
+            original_video_data.append( f"{edited_title} - {edited_year} - {edited_director} - {edited_genre} - {edited_rating}")
 
-        update_t2_with_video_list()
+            update_t2_with_video_list()
         
-        # Close the edit_window
-        edit_window.destroy()
+            # Close the edit_window
+            edit_window.destroy()
 
     # Button to save edited video information
     tk.Button(edit_window, text="Save", command=save_edited_video).grid(row=5, column=0, columnspan=2, pady=10)
@@ -563,11 +607,13 @@ def rent_video():
     if not selected_customer_index or not selected_video_index:
         messagebox.showwarning("Selection Required", "Please select a customer and a video to rent.")
         return
-        
     customer_selected = t1.get(selected_customer_index[0])
     video_selected = t2.get(selected_video_index[0])
 
-    messagebox.showinfo("Rental Processed", f"Rented '{video_selected}' to {customer_selected}")
+    customer_name, _, _, _, _= customer_selected.split(" - ")
+    video_name, _, _, _, _, = video_selected.split(" - ")
+
+    messagebox.showinfo("Rental Processed", f"Rented '{video_name}' to {customer_name}")
 
 tk.Button(rental, text="Rent Video", command=rent_video).pack()
 tk.Button(returnn, text="Return Video").pack()
