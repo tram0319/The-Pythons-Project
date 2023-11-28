@@ -129,7 +129,7 @@ def valid_director(d):
         messagebox.showerror("Error", "Director cannot be empty")
         return False
     elif not director.isalpha():
-        messagebox.showerror("Error", "Invalid genre.")
+        messagebox.showerror("Error", "Invalid director.")
     elif not char_limit(director, 30):
         return False
     return True
