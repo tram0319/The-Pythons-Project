@@ -1,11 +1,23 @@
 from Video_Class import Video
 import re
-
+import json
 
 class Inventory_List():
 
     def __init__(self):
         self.inventory_list = []
+        self.read_inventory()
+
+    def read_inventory(self):
+        with open("inventory.json", "r") as f:
+            # Load the JSON data from the file
+            data = json.load(f)
+            # Create a new Video object for each item in the JSON data
+            for item in data:
+                new_video = Video(item['name'], item['year'], item['director'], item['rating'], item['genre'],
+                                  item['rentalStatus'])
+                # Add the new Video object to the inventory_list
+                self.inventory_list.append(new_video)
 
     def get_inventory(self):
         return self.inventory_list
@@ -41,4 +53,9 @@ class Inventory_List():
         reverse = False if order == 'asc' else True
         self.inventory_list.sort(key=lambda x: getattr(x, attribute), reverse=reverse)
 
-
+    def write_inventory(self):
+        with open("inventory.json", "w") as f:
+            # Convert the object to a JSON serializable format
+            serializable_list = [video.__dict__ for video in self.inventory_list]
+            # Write the JSON serializable object to the file
+            json.dump(serializable_list, f)
