@@ -42,6 +42,3 @@ class Inventory_List():
         self.inventory_list.sort(key=lambda x: getattr(x, attribute), reverse=reverse)
 
 
-v = Inventory_List()
-print(v.add_video('Test', '2023', 'James Hammond', '8', 'Horror', 'NA'))
-print(v.get_inventory())
