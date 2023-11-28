@@ -419,7 +419,7 @@ def remove_video():
     confirmation = messagebox.askokcancel("Confirm Deletion", f"Do you want to remove the video:\n{video_title}")
 
     if confirmation:
-        InventoryList.remove_video(video_name)
+        InventoryList.remove_video(video_title)
         video_list.delete(selected_index)
 
         # Remove the video from the original_video_data list
@@ -476,8 +476,10 @@ def edit_video():
             edited_rating = rating_entry.get()
 
             # Update the video_list with the edited video information
+            video_info = video_list.get(selected_index)
+            video_title = video_info.split()[0]
+            InventoryList.remove_video(video_title)
             video_list.delete(selected_index)
-            InventoryList.remove_video(video_list.get(selected_index))
         
             video_list.insert(tk.END, f"{edited_title} - {edited_year} - {edited_director} - {edited_genre} - {edited_rating}")
             InventoryList.add_video(edited_title, edited_year, edited_director, edited_rating, edited_genre, "Available")
