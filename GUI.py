@@ -56,6 +56,7 @@ def valid_phone(x):
         return False
     return True
 
+
 regex = r"^\S+@\S+\.\S+$"
 def valid_email(e):
     email = e.get()
@@ -65,12 +66,16 @@ def valid_email(e):
     elif not (re.fullmatch(regex, email)):
         messagebox.showerror("Error", "Invalid email address.")
         return False
+    elif not char_limit(email, 30):
+        return False
     return True
 
 def valid_address(addr):
     address = addr.get()
     if not address:
         messagebox.showerror("Error", "Address cannot be empty")
+        return False
+    elif not char_limit(address, 30):
         return False
     return True
 
@@ -81,6 +86,8 @@ def valid_fName(fn):
         return False
     elif not fName.isalpha() or " " in fName:
         messagebox.showerror("Error", "Invalid first name.")
+        return False
+    elif not char_limit(fName, 20):
         return False
     return True
 
@@ -93,6 +100,8 @@ def valid_lName(ln):
     elif not lName.isalpha() or " " in lName:
         messagebox.showerror("Error", "Invalid last name.")
         return False
+    elif not char_limit(lName, 20):
+        return False
     return True
     
 def valid_title(t):
@@ -100,8 +109,7 @@ def valid_title(t):
     if not title:
         messagebox.showerror("Error", "Title cannot be empty")
         return False
-    elif not title.isalpha() or " " in title:
-        messagebox.showerror("Error", "Invalid title.")
+    elif not char_limit(title, 30):
         return False
     return True
 
@@ -120,8 +128,7 @@ def valid_director(d):
     if not director:
         messagebox.showerror("Error", "Director cannot be empty")
         return False
-    elif not director.isalpha() or " " in director:
-        messagebox.showerror("Error", "Invalid director.")
+    elif not char_limit(director, 30):
         return False
     return True
 
@@ -132,6 +139,8 @@ def valid_genre(g):
         return False
     elif not genre.isalpha() or " " in genre:
         messagebox.showerror("Error", "Invalid genre.")
+        return False
+    elif not char_limit(genre, 20):
         return False
     return True
 
@@ -146,53 +155,11 @@ def valid_rating(r):
         return False
     return True
 
-def fname_limit(a, limit):
-    if not len(a) <= limit:
-        messagebox.showerror("Error", "Invalid first name. Maximum is 20 characters!")
-        return False
-    return True
-
-def lname_limit(b, limit):
-    if not len(b) <= limit:
-        messagebox.showerror("Error", "Invalid last name. Maximum is 20 characters!")
-        return False
-    return True
-
-def address_limit(c, limit):
+def char_limit(c, limit):
     if not len(c) <= limit:
-        messagebox.showerror("Error", "Invalid address. Maximum is 30 characters!")
+        messagebox.showerror("Error", "Character limit reached")
         return False
     return True
-
-def email_limit(d, limit):
-    if not len(d) <= limit:
-        messagebox.showerror("Error", "Invalid email. Maximum is 30 characters!")
-        return False
-    return True
-
-def title_limit(e, limit):
-    if not len(e) <= limit:
-        messagebox.showerror("Error", "Invalid title. Maximum is 30 characters!")
-        return False
-    return True
-
-def year_limit(f, limit):
-    if not len(f) == limit:
-        messagebox.showerror("Error", "Invalid year. Valid year contains 4 digits!")
-        return False
-    return True
-
-def director_limit(g, limit):
-    if not len(g) <= limit:
-        messagebox.showerror("Error", "Invalid director. Maximum is 30 characters!")
-        return False
-    return True
-
-def genre_limit(h, limit):
-    if not len(h) <= limit:
-        messagebox.showerror("Error", "Invalid genre. Maximum is 20 characters!")
-        return False
-    return True   
 
 def update_t1_with_customer_list():
     t1.delete(0, tk.END)  # Clear the current list in t1
