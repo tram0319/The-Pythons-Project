@@ -556,7 +556,20 @@ t4=tk.Listbox(returnn, width=35, height=10).pack(side="left")
 t4_scrollbar = tk.Scrollbar(returnn, orient="vertical")
 t4_scrollbar.pack(side="left", fill="y")
 
-tk.Button(rental, text="Rent Video").pack()
+def rent_video():
+    selected_customer_index = t1.curselection()
+    selected_video_index = t2.curselection()
+
+    if not selected_customer_index or not selected_video_index:
+        messagebox.showwarning("Selection Required", "Please select a customer and a video to rent.")
+        return
+        
+    customer_selected = t1.get(selected_customer_index[0])
+    video_selected = t2.get(selected_video_index[0])
+
+    messagebox.showinfo("Rental Processed", f"Rented '{video_selected}' to {customer_selected}")
+
+tk.Button(rental, text="Rent Video", command=rent_video).pack()
 tk.Button(returnn, text="Return Video").pack()
 
 
