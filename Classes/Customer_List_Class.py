@@ -1,5 +1,6 @@
 from Customer_Class import Customer
 import json
+import re
 
 
 class Customer_List:
@@ -21,8 +22,19 @@ class Customer_List:
                 self.cust_list.append(new_cust)
 
     def add_cust(self, firstName, lastName, address, phoneNumber, email, currentRentals):
-        new_cust = Customer(firstName, lastName, address, phoneNumber, email, currentRentals)
-        self.cust_list.append(new_cust)
+        if re.match("^[a-zA-Z]+$", firstName) and re.match("^[a-zA-Z ]+$", firstName) and phoneNumber.isnumeric() and currentRentals.isboolean():
+            new_cust = Customer(firstName, lastName, address, phoneNumber, email, currentRentals)
+            self.cust_list.append(new_cust)
+            return f'Added: {firstName, lastName} to customer.'
+        elif not re.match("^[a-zA-Z]+$", firstName):
+            return f'First name can only contain letters.'
+        elif not re.match("^[a-zA-Z]+$", lastName):
+            return f'Last name can only contain letters.'
+        elif not phoneNumber.isnumeric():
+            return f'Phone number can only contain numbers.'
+        else:
+            return f'An error occured while adding {firstName, lastName} to customer.'
+
 
     def remove_cust(self, firstName, lastName):
         for customer in self.cust_list:
