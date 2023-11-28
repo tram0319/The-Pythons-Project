@@ -128,6 +128,8 @@ def valid_director(d):
     if not director:
         messagebox.showerror("Error", "Director cannot be empty")
         return False
+    elif not director.isalpha():
+        messagebox.showerror("Error", "Invalid genre.")
     elif not char_limit(director, 30):
         return False
     return True
@@ -137,7 +139,7 @@ def valid_genre(g):
     if not genre:
         messagebox.showerror("Error", "Genre cannot be empty")
         return False
-    elif not genre.isalpha() or " " in genre:
+    elif not " " in genre:
         messagebox.showerror("Error", "Invalid genre.")
         return False
     elif not char_limit(genre, 20):
@@ -146,12 +148,12 @@ def valid_genre(g):
 
 def valid_rating(r):
     rating = r.get()
-    valid_ratings = ["PG", "R", "PG-13", "G"]
+    valid_ratings = ["PG", "R", "PG-13", "G", "Unrated"]
     if not rating:
         messagebox.showerror("Error", "Rating cannot be empty")
         return False
     elif rating not in valid_ratings:
-        messagebox.showerror("Error", "Invalid rating. Please enter G, PG, PG-13, or R.")
+        messagebox.showerror("Error", "Invalid rating. Please enter G, PG, PG-13, R, or Unrated")
         return False
     return True
 
@@ -548,14 +550,14 @@ def on_scroll2(*args):
     t4.yview(*args)
     
 #list of customer name,....
-t1 = tk.Listbox(rental, width=35, height=20, exportselection=False)
+t1 = tk.Listbox(rental, width=50, height=20, exportselection=False)
 t1.pack(side="left")
 t1_scrollbar = tk.Scrollbar(rental, orient="vertical", command=t1.yview)
 t1_scrollbar.pack(side="left", fill="y")
 t1.config(yscrollcommand=t1_scrollbar.set)
 
 #list of video name, curent rental status
-t2=tk.Listbox(rental, width=35, height=20, exportselection=False)
+t2=tk.Listbox(rental, width=50, height=20, exportselection=False)
 t2.pack(side="left")
 t2_scrollbar = tk.Scrollbar(rental, orient="vertical", command=t2.yview)
 t2_scrollbar.pack(side="left", fill="y")
