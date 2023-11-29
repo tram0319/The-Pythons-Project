@@ -5,8 +5,6 @@ import re
 
 import Inventory_List_Class
 import Customer_List_Class
-import Video_Class
-import Customer_Class
 
 InventoryList = Inventory_List_Class.Inventory_List()
 CustomerList = Customer_List_Class.Customer_List()
@@ -128,7 +126,7 @@ def valid_director(d):
     if not director:
         messagebox.showerror("Error", "Director cannot be empty")
         return False
-    elif not director.isalpha():
+    elif not director.replace(" ", "").isalpha():
         messagebox.showerror("Error", "Invalid director.")
     elif not char_limit(director, 30):
         return False
@@ -139,20 +137,17 @@ def valid_genre(g):
     if not genre:
         messagebox.showerror("Error", "Genre cannot be empty")
         return False
-    elif not " " in genre:
-        messagebox.showerror("Error", "Invalid genre.")
-        return False
     elif not char_limit(genre, 20):
         return False
     return True
 
 def valid_rating(r):
     rating = r.get()
-    valid_ratings = ["PG", "R", "PG-13", "G", "Unrated"]
+    valid_ratings = ["PG", "R", "PG-13", "G", "UNRATED"]
     if not rating:
         messagebox.showerror("Error", "Rating cannot be empty")
         return False
-    elif rating not in valid_ratings:
+    elif rating.upper() not in valid_ratings:
         messagebox.showerror("Error", "Invalid rating. Please enter G, PG, PG-13, R, or Unrated")
         return False
     return True
@@ -248,7 +243,7 @@ def edit_customer():
     selected_indices = customer_list.curselection()
 
     if not selected_indices:
-        messagebox.showwarning("No Customer Selected", "Please select a customer to remove.")
+        messagebox.showwarning("No Customer Selected", "Please select a customer to edit.")
         return
 
     selected_index = selected_indices[0]
@@ -392,7 +387,7 @@ def add_video():
             year = year_entry.get()
             director = director_entry.get()
             genre = genre_entry.get()
-            rating = rating_entry.get()
+            rating = rating_entry.get().upper()
 
             video_list.insert(tk.END, f"{title} - {year} - {director} - {genre} - {rating}")
             InventoryList.add_video(title, year, director, rating, genre, "Available")
@@ -434,7 +429,7 @@ def edit_video():
     selected_indices = video_list.curselection()
 
     if not selected_indices:
-        messagebox.showwarning("No Video Selected", "Please select a video to remove.")
+        messagebox.showwarning("No Video Selected", "Please select a video to edit.")
         return
 
     selected_index = selected_indices[0]
@@ -475,7 +470,7 @@ def edit_video():
             edited_year = year_entry.get()
             edited_director = director_entry.get()
             edited_genre = genre_entry.get()
-            edited_rating = rating_entry.get()
+            edited_rating = rating_entry.get().upper()
 
             # Update the video_list with the edited video information
             video_info = video_list.get(selected_index)
