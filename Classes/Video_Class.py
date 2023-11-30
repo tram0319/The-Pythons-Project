@@ -1,6 +1,6 @@
 class Video:
     
-    def __init__(self, name, year, director, rating, genre, rentalStatus):
+    def __init__(self, name, year, director, rating, genre, rentalStatus="Available"):
         self.name = name
         self.year = year
         self.director = director

@@ -5,8 +5,6 @@ import re
 
 import Inventory_List_Class
 import Customer_List_Class
-import Video_Class
-import Customer_Class
 
 InventoryList = Inventory_List_Class.Inventory_List()
 CustomerList = Customer_List_Class.Customer_List()
@@ -128,6 +126,8 @@ def valid_director(d):
     if not director:
         messagebox.showerror("Error", "Director cannot be empty")
         return False
+    elif not director.replace(" ", "").isalpha():
+        messagebox.showerror("Error", "Invalid director.")
     elif not char_limit(director, 30):
         return False
     return True
@@ -137,21 +137,18 @@ def valid_genre(g):
     if not genre:
         messagebox.showerror("Error", "Genre cannot be empty")
         return False
-    elif not genre.isalpha() or " " in genre:
-        messagebox.showerror("Error", "Invalid genre.")
-        return False
     elif not char_limit(genre, 20):
         return False
     return True
 
 def valid_rating(r):
     rating = r.get()
-    valid_ratings = ["PG", "R", "PG-13", "G"]
+    valid_ratings = ["PG", "R", "PG-13", "G", "UNRATED"]
     if not rating:
         messagebox.showerror("Error", "Rating cannot be empty")
         return False
-    elif rating not in valid_ratings:
-        messagebox.showerror("Error", "Invalid rating. Please enter G, PG, PG-13, or R.")
+    elif rating.upper() not in valid_ratings:
+        messagebox.showerror("Error", "Invalid rating. Please enter G, PG, PG-13, R, or Unrated")
         return False
     return True
 
@@ -246,7 +243,7 @@ def edit_customer():
     selected_indices = customer_list.curselection()
 
     if not selected_indices:
-        messagebox.showwarning("No Customer Selected", "Please select a customer to remove.")
+        messagebox.showwarning("No Customer Selected", "Please select a customer to edit.")
         return
 
     selected_index = selected_indices[0]
@@ -390,7 +387,7 @@ def add_video():
             year = year_entry.get()
             director = director_entry.get()
             genre = genre_entry.get()
-            rating = rating_entry.get()
+            rating = rating_entry.get().upper()
 
             video_list.insert(tk.END, f"{title} - {year} - {director} - {genre} - {rating}")
             InventoryList.add_video(title, year, director, rating, genre, "Available")
@@ -414,16 +411,20 @@ def remove_video():
 
     selected_index = selected_indices[0]
 
-    video_name = video_list.get(selected_index)
-    video_title = video_name.split()[0]
+    video_info = video_list.get(selected_index)
+    video_title = video_info.split()[0]
     confirmation = messagebox.askokcancel("Confirm Deletion", f"Do you want to remove the video:\n{video_title}")
 
     if confirmation:
+        index = 0
+        for i in original_video_data:
+            if i == video_info:
+                original_video_data.pop(index)
+                break
+            index += 1
+
         InventoryList.remove_video(video_title)
         video_list.delete(selected_index)
-
-        # Remove the video from the original_video_data list
-        original_video_data.pop(selected_index)
 
         update_t2_with_video_list()
 
@@ -432,7 +433,7 @@ def edit_video():
     selected_indices = video_list.curselection()
 
     if not selected_indices:
-        messagebox.showwarning("No Video Selected", "Please select a video to remove.")
+        messagebox.showwarning("No Video Selected", "Please select a video to edit.")
         return
 
     selected_index = selected_indices[0]
@@ -473,19 +474,26 @@ def edit_video():
             edited_year = year_entry.get()
             edited_director = director_entry.get()
             edited_genre = genre_entry.get()
-            edited_rating = rating_entry.get()
+            edited_rating = rating_entry.get().upper()
 
             # Update the video_list with the edited video information
-            video_info = video_list.get(selected_index)
             video_title = video_info.split()[0]
+
+            # Removes video from original_video_data, works when the list is filtered
+            index = 0
+            for i in original_video_data:
+                if i == video_info:
+                    original_video_data.pop(index)
+                    original_video_data.append( f"{edited_title} - {edited_year} - {edited_director} - {edited_genre} - {edited_rating}")
+                    break
+                index += 1
+
             InventoryList.remove_video(video_title)
             video_list.delete(selected_index)
         
             video_list.insert(tk.END, f"{edited_title} - {edited_year} - {edited_director} - {edited_genre} - {edited_rating}")
-            InventoryList.add_video(edited_title, edited_year, edited_director, edited_rating, edited_genre, "Available")
 
-            original_video_data.pop(selected_index)
-            original_video_data.append( f"{edited_title} - {edited_year} - {edited_director} - {edited_genre} - {edited_rating}")
+            InventoryList.add_video(title, year, director, rating, genre, "Available")
 
             update_t2_with_video_list()
         
@@ -548,14 +556,14 @@ def on_scroll2(*args):
     t4.yview(*args)
     
 #list of customer name,....
-t1 = tk.Listbox(rental, width=35, height=20, exportselection=False)
+t1 = tk.Listbox(rental, width=50, height=20, exportselection=False)
 t1.pack(side="left")
 t1_scrollbar = tk.Scrollbar(rental, orient="vertical", command=t1.yview)
 t1_scrollbar.pack(side="left", fill="y")
 t1.config(yscrollcommand=t1_scrollbar.set)
 
 #list of video name, curent rental status
-t2=tk.Listbox(rental, width=35, height=20, exportselection=False)
+t2=tk.Listbox(rental, width=50, height=20, exportselection=False)
 t2.pack(side="left")
 t2_scrollbar = tk.Scrollbar(rental, orient="vertical", command=t2.yview)
 t2_scrollbar.pack(side="left", fill="y")
