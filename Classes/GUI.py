@@ -5,6 +5,7 @@ import re
 
 import Inventory_List_Class
 import Customer_List_Class
+import Customer_Class
 
 InventoryList = Inventory_List_Class.Inventory_List()
 CustomerList = Customer_List_Class.Customer_List()
@@ -210,6 +211,10 @@ def add_customer():
             # Update the original_customer_data list
             original_customer_data.append(f"{first_name.capitalize()} - {last_name.capitalize()} - {customer_address} - {customer_phone} - {customer_email}")
 
+            #Add customer to list class object
+            CustomerList.add_cust(first_name, last_name, customer_address, customer_phone, customer_email)
+            
+
             # Call the function to update t1 with the same data as customer_list
             update_t1_with_customer_list()
             
@@ -226,15 +231,26 @@ def remove_customer():
 
     selected_index = selected_indices[0]
 
-    customer_name = customer_list.get(selected_index)
-    first_name = customer_name.split()[0]
-    confirmation = messagebox.askokcancel("Confirm Deletion", f"Do you want to remove the customer:\n{first_name}")
+    customer_info = customer_list.get(selected_index)
+    first_name = customer_info.split()[0]
+    last_name = customer_info.split()[2]
+    print(last_name)
+    confirmation = messagebox.askokcancel("Confirm Deletion", f"Do you want to remove the customer:\n{first_name} {last_name}")
 
+    # Remove the customer from the original_customer_data list
     if confirmation:
+        index = 0
+        for i in original_customer_data:
+            if i == customer_info:
+                original_customer_data.pop(index)
+                break
+            index += 1
+        
+        CustomerList.remove_cust(first_name, last_name)
+        
         customer_list.delete(selected_index)
+    
 
-        # Remove the customer from the original_customer_data list
-        original_customer_data.pop(selected_index)
 
         update_t1_with_customer_list()
 
@@ -287,14 +303,24 @@ def edit_customer():
             edited_phone = phone_entry.get()
             edited_email = email_entry.get()
 
+
             # Perform any validation or processing needed
 
             # Update the customer_list with the edited customer information
+            index = 0
+            for i in original_customer_data:
+                if i == customer_info:    
+                    original_customer_data.pop(index)
+                    original_customer_data.append( f"{edited_first_name.capitalize()} - {edited_last_name.capitalize()} - {edited_address} - {edited_phone} - {edited_email}")
+                    break
+                index += 1
+                
+            CustomerList.edit_cust_info(fName, lName, edited_first_name, edited_last_name, edited_address, edited_phone, edited_email)
+            
             customer_list.delete(selected_index)
             customer_list.insert(tk.END, f"{edited_first_name.capitalize()} - {edited_last_name.capitalize()} - {edited_address} - {edited_phone} - {edited_email}")
 
-            original_customer_data.pop(selected_index)
-            original_customer_data.append( f"{edited_first_name.capitalize()} - {edited_last_name.capitalize()} - {edited_address} - {edited_phone} - {edited_email}")
+                       
 
             update_t1_with_customer_list()
             
