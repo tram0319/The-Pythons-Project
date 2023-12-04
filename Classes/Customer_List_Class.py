@@ -21,9 +21,9 @@ class Customer_List:
                 # Add the new Video object to the inventory_list
                 self.cust_list.append(new_cust)
 
-    def add_cust(self, firstName, lastName, address, phoneNumber, email, currentRentals):
-        if re.match("^[a-zA-Z]+$", firstName) and re.match("^[a-zA-Z ]+$", firstName) and phoneNumber.isnumeric() and currentRentals.isboolean():
-            new_cust = Customer(firstName, lastName, address, phoneNumber, email, currentRentals)
+    def add_cust(self, firstName, lastName, address, phoneNumber, email):
+        if re.match("^[a-zA-Z]+$", firstName) and re.match("^[a-zA-Z ]+$", firstName) and phoneNumber.isnumeric():
+            new_cust = Customer(firstName, lastName, address, phoneNumber, email, [])
             self.cust_list.append(new_cust)
             return f'Added: {firstName, lastName} to customer.'
         elif not re.match("^[a-zA-Z]+$", firstName):
@@ -47,6 +47,17 @@ class Customer_List:
         for customer in self.cust_list:
             if customer.firstName == firstName and customer.lastName == lastName:
                 return customer
+        return f'Customer was not found in the customer list'
+    
+    def edit_cust_info(self, firstName, lastName, newFirst, newLast, newAddress, newPhone, newEmail):
+        for customer in self.cust_list:
+            if customer.firstName == firstName and customer.lastName == lastName:
+                customer.firstName = newFirst
+                customer.lastName = newLast
+                customer.address = newAddress
+                customer.phoneNumber = newPhone
+                customer.email = newEmail
+                break
         return f'Customer was not found in the customer list'
 
     def get_cust_list(self):
