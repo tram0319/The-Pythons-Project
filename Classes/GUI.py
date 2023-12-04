@@ -361,31 +361,47 @@ def parse_customer_info(customer_info):
 
 def filter_by():
     # Function to be executed when "Filter By" button is clicked
-    # Create a new Toplevel window for entering the initial letter
+    # Create a new Toplevel window for selecting the filter option
     filter_window = tk.Toplevel(customer)
-    filter_window.title("Filter By Initial Letter")
+    filter_window.title("Filter Customers")
 
-    # Add entry field and label for the initial letter
-    tk.Label(filter_window, text="Filter by Initial Letter:").grid(row=0, column=0, padx=10, pady=5)
-    filter_entry = tk.Entry(filter_window, width=5)
-    filter_entry.grid(row=0, column=1, padx=10, pady=5)
+    # Add a dropdown menu for selecting the filter option
+    filter_var = tk.StringVar()
+    filter_var.set("First Name")  # Set the default filter option
+    filter_label = tk.Label(filter_window, text="Select Filter Option:")
+    filter_label.grid(row=0, column=0, padx=10, pady=5)
+
+    filter_options = ["First Name", "Last Name"]
+    filter_dropdown = ttk.Combobox(filter_window, values=filter_options, textvariable=filter_var)
+    filter_dropdown.grid(row=0, column=1, padx=10, pady=5)
+
+    # Add entry fields for the filter criteria
+    tk.Label(filter_window, text="Filter Value:").grid(row=1, column=0, padx=10, pady=5)
+    filter_value_entry = tk.Entry(filter_window)
+    filter_value_entry.grid(row=1, column=1, padx=10, pady=5)
 
     # Function to apply the filter
     def apply_filter():
-        initial_letter = filter_entry.get().strip().lower()
+        filter_option = filter_var.get()
+        filter_value = filter_value_entry.get().strip().lower()
+
         customer_list.delete(0, tk.END)  # Clear the current listbox
 
         # Iterate through the original customer data and add matching customers to the listbox
         for original_customer_info in original_customer_data:
-            original_fName, _, _, _, _, = parse_customer_info(original_customer_info)
-            if original_fName.lower().startswith(initial_letter):
+            original_fName, original_lName, _, _, _ = parse_customer_info(original_customer_info)
+            if (
+                (filter_option == "First Name" and filter_value in original_fName.lower())
+                or (filter_option == "Last Name" and filter_value in original_lName.lower())
+            ):
                 customer_list.insert(tk.END, original_customer_info)
 
         # Close the filter_window
         filter_window.destroy()
 
     # Button to apply the filter
-    tk.Button(filter_window, text="Apply Filter", command=apply_filter).grid(row=1, column=0, columnspan=2, pady=10)
+    tk.Button(filter_window, text="Apply Filter", command=apply_filter).grid(row=2, column=0, columnspan=2, pady=10)
+
 
 tk.Button(customer, text="Add Customer", command=add_customer).grid(row=1, column=1, sticky="ew", padx=10, pady=5)
 tk.Button(customer, text="Remove Customer", command=remove_customer).grid(row=2, column=1, sticky="ew", padx=10, pady=5)
@@ -559,32 +575,58 @@ def parse_video_info(video_info):
     return parts[0], parts[1], parts[2], parts[3], parts[4] if len(parts) > 4 else ""
 
 def vFilter_by():
-    # Function to be executed when "Filter By" button is clicked
-    # Create a new Toplevel window for entering the initial letter
     filter_window = tk.Toplevel(video)
-    filter_window.title("Filter By Initial Letter")
+    filter_window.title("Filter Videos")
 
-    # Add entry field and label for the initial letter
-    tk.Label(filter_window, text="Filter by Initial Letter:").grid(row=0, column=0, padx=10, pady=5)
-    filter_entry = tk.Entry(filter_window, width=5)
-    filter_entry.grid(row=0, column=1, padx=10, pady=5)
+    filter_options = ["Title", "Year", "Director", "Genre", "Rating"]
+    filter_var = tk.StringVar(value=filter_options[0])
+    tk.Label(filter_window, text="Select Filter Option:").grid(row=0, column=0, padx=10, pady=5)
+    filter_dropdown = ttk.Combobox(filter_window, values=filter_options, textvariable=filter_var)
+    filter_dropdown.grid(row=0, column=1, padx=10, pady=5)
 
-    # Function to apply the filter
-    def apply_filter():
-        initial_letter = filter_entry.get().strip().lower()
+    tk.Label(filter_window, text="Filter Value:").grid(row=1, column=0, padx=10, pady=5)
+    filter_value_entry = tk.Entry(filter_window)
+    filter_value_entry.grid(row=1, column=1, padx=10, pady=5)
+
+        # Function to apply the filter
+    def vapply_filter():
+        filter_option = filter_var.get()
+        filter_value = filter_value_entry.get().strip().lower()
+
         video_list.delete(0, tk.END)  # Clear the current listbox
 
-        # Iterate through the original video data and add matching videos to the listbox
+            # Iterate through the original video data and add matching videos to the listbox
         for original_video_info in original_video_data:
-            original_title, _, _, _, _, = parse_video_info(original_video_info)
-            if original_title.lower().startswith(initial_letter):
-                video_list.insert(tk.END, original_video_info)
+            if filter_option == "Title":
+                title, _, _, _, _ = parse_video_info(original_video_info)
+                if filter_value.lower() in title.lower():
+                    video_list.insert(tk.END, original_video_info)
+            elif filter_option == "Year":
+                _, year, _, _, _ = parse_video_info(original_video_info)
+                if filter_value in year:
+                    video_list.insert(tk.END, original_video_info)
+            elif filter_option == "Director":
+                _, _, director, _, _ = parse_video_info(original_video_info)
+                if filter_value.lower() in director.lower():
+                    video_list.insert(tk.END, original_video_info)
+            elif filter_option == "Genre":
+                _, _, _, genre, _ = parse_video_info(original_video_info)
+                if filter_value.lower() in genre.lower():
+                    video_list.insert(tk.END, original_video_info)
+            elif filter_option == "Rating":
+                _, _, _, _, rating = parse_video_info(original_video_info)
+                if filter_value.lower() in rating.lower():
+                    video_list.insert(tk.END, original_video_info)
+
+
+
 
         # Close the filter_window
         filter_window.destroy()
 
     # Button to apply the filter
-    tk.Button(filter_window, text="Apply Filter", command=apply_filter).grid(row=1, column=0, columnspan=2, pady=10)
+    tk.Button(filter_window, text="Apply Filter", command=vapply_filter).grid(row=2, column=0, columnspan=2, pady=10)
+
 
 tk.Button(video, text="Add Video", command=add_video).grid(row=1, column=1, sticky="ew", padx=10, pady=5)
 tk.Button(video, text="Remove Video", command=remove_video).grid(row=2, column=1, sticky="ew", padx=10, pady=5)
