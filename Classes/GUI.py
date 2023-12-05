@@ -209,6 +209,7 @@ def add_customer():
     # Create a new Toplevel window for entering customer information
     add_window = tk.Toplevel(customer)
     add_window.title("Add Customer")
+    add_window.attributes('-topmost', True)
 
     # Add entry fields, labels, and other widgets for customer information
     tk.Label(add_window, text="Customer First Name:").grid(row=0, column=0, padx=10, pady=5)
@@ -303,6 +304,7 @@ def edit_customer():
     # Create a new Toplevel window for editing customer information
     edit_window = tk.Toplevel(customer)
     edit_window.title("Edit Customer")
+    edit_window.attributes('-topmost', True)
 
     # Add entry fields, labels, and other widgets for customer information
 
@@ -369,6 +371,7 @@ def filter_by():
     # Create a new Toplevel window for selecting the filter option
     filter_window = tk.Toplevel(customer)
     filter_window.title("Filter Customers")
+    filter_window.attributes('-topmost', True)
 
     # Add a dropdown menu for selecting the filter option
     filter_var = tk.StringVar()
@@ -429,6 +432,7 @@ def add_video():
     # Create a new Toplevel window for entering video information
     add_window = tk.Toplevel(video)
     add_window.title("Add Video")
+    add_window.attributes('-topmost', True)
 
     # Add entry fields, labels, and other widgets for customer information
     tk.Label(add_window, text="Title:").grid(row=0, column=0, padx=10, pady=5)
@@ -517,6 +521,7 @@ def edit_video():
     # Create a new Toplevel window for editing video information
     edit_window = tk.Toplevel(video)
     edit_window.title("Edit Video")
+    edit_window.attributes('-topmost', True)
 
     # Add entry fields, labels, and other widgets for video information
 
@@ -641,7 +646,6 @@ tk.Button(video, text="Filter By", command=vFilter_by).grid(row=4, column=1, sti
 
 # Rental Information label
 tk.Label(rental, text="Start a Rental").pack()
-tk.Label(returnn, text="Start a Return").pack()
 
 def on_scroll(*args):
     t1.yview(*args)
