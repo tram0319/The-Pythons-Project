@@ -193,6 +193,16 @@ def update_t2_with_video_list():
     for item in video_list.get(0, tk.END):
         t2.insert(tk.END, item)
 
+def update_t3_with_customer_list():
+    t3.delete(0, tk.END)  # Clear the current list in t3
+    for item in customer_list.get(0, tk.END):
+        t3.insert(tk.END, item)
+        
+def update_t4_with_video_list():
+    t4.delete(0, tk.END)  # Clear the current list in t4
+    for item in video_list.get(0, tk.END):
+        t4.insert(tk.END, item)
+
 # Buttons in customer frame
 def add_customer():
     # Function to be executed when "Add Customer" button is clicked
