@@ -454,14 +454,16 @@ def add_video():
             director = director_entry.get()
             genre = genre_entry.get()
             rating = rating_entry.get().upper()
+            availability = "Available"
 
-            video_list.insert(tk.END, f"{title} - {year} - {director} - {genre} - {rating}")
-            InventoryList.add_video(title, year, director, rating, genre, "Available")
+            video_list.insert(tk.END, f"{title} - {year} - {director} - {genre} - {rating} - {availability}")
+            InventoryList.add_video(title, year, director, rating, genre, availability)
 
             # Update the original_video_data list
-            original_video_data.append(f"{title} - {year} - {director} - {genre} - {rating}")
+            original_video_data.append(f"{title} - {year} - {director} - {genre} - {rating} - {availability}")
 
             update_t2_with_video_list()
+            update_t4_with_video_list()
         
             add_window.destroy()
 
@@ -505,7 +507,7 @@ def edit_video():
     selected_index = selected_indices[0]
 
     video_info = video_list.get(selected_index)
-    title, year, director, genre, rating = parse_video_info(video_info)
+    title, year, director, genre, rating, availability = parse_video_info(video_info)
 
     # Create a new Toplevel window for editing video information
     edit_window = tk.Toplevel(video)
@@ -541,6 +543,7 @@ def edit_video():
             edited_director = director_entry.get()
             edited_genre = genre_entry.get()
             edited_rating = rating_entry.get().upper()
+            availability = "Available"
 
             # Update the video_list with the edited video information
             video_title = video_info.split()[0]
@@ -550,16 +553,16 @@ def edit_video():
             for i in original_video_data:
                 if i == video_info:
                     original_video_data.pop(index)
-                    original_video_data.append( f"{edited_title} - {edited_year} - {edited_director} - {edited_genre} - {edited_rating}")
+                    original_video_data.append( f"{edited_title} - {edited_year} - {edited_director} - {edited_genre} - {edited_rating} - {availability}")
                     break
                 index += 1
 
             InventoryList.remove_video(video_title)
             video_list.delete(selected_index)
         
-            video_list.insert(tk.END, f"{edited_title} - {edited_year} - {edited_director} - {edited_genre} - {edited_rating}")
+            video_list.insert(tk.END, f"{edited_title} - {edited_year} - {edited_director} - {edited_genre} - {edited_rating} - {availability}")
 
-            InventoryList.add_video(title, year, director, rating, genre, "Available")
+            InventoryList.add_video(title, year, director, rating, genre, availability)
 
             update_t2_with_video_list()
         
@@ -571,8 +574,8 @@ def edit_video():
 
 def parse_video_info(video_info):
     # Helper function to parse video information from the listbox entry
-    parts = video_info.split(" - ", 4)
-    return parts[0], parts[1], parts[2], parts[3], parts[4] if len(parts) > 4 else ""
+    parts = video_info.split(" - ", 5)
+    return parts[0], parts[1], parts[2], parts[3], parts[4], parts[5] if len(parts) > 5 else ""
 
 def vFilter_by():
     filter_window = tk.Toplevel(video)
@@ -639,11 +642,6 @@ tk.Label(rental, text="Start a Rental").pack()
 def on_scroll(*args):
     t1.yview(*args)
     t2.yview(*args)
-    
-# Return Information Label
-tk.Label(returnn, text="Start a Return").pack()
-
-def on_scroll2(*args):
     t3.yview(*args)
     t4.yview(*args)
     
@@ -661,13 +659,17 @@ t2_scrollbar = tk.Scrollbar(rental, orient="vertical", command=t2.yview)
 t2_scrollbar.pack(side="left", fill="y")
 t2.config(yscrollcommand=t2_scrollbar.set)
 
-t3=tk.Listbox(returnn, width=35, height=10).pack(side="left")
-t3_scrollbar = tk.Scrollbar(returnn, orient="vertical")
+t3=tk.Listbox(returnn, width=50, height=20, exportselection=False)
+t3.pack(side="left")
+t3_scrollbar = tk.Scrollbar(returnn, orient="vertical", command=t3.yview)
 t3_scrollbar.pack(side="left", fill="y")
+t3.config(yscrollcommand=t3_scrollbar.set)
 
-t4=tk.Listbox(returnn, width=35, height=10).pack(side="left")
-t4_scrollbar = tk.Scrollbar(returnn, orient="vertical")
+t4=tk.Listbox(returnn, width=50, height=20, exportselection=False)
+t4.pack(side="left")
+t4_scrollbar = tk.Scrollbar(returnn, orient="vertical", command=t4.yview)
 t4_scrollbar.pack(side="left", fill="y")
+t4.config(yscrollcommand=t4_scrollbar.set)
 
 def rent_video():
     selected_customer_index = t1.curselection()
@@ -679,13 +681,29 @@ def rent_video():
     customer_selected = t1.get(selected_customer_index[0])
     video_selected = t2.get(selected_video_index[0])
 
-    customer_name, _, _, _, _= customer_selected.split(" - ")
-    video_name, _, _, _, _, = video_selected.split(" - ")
-
+    customer_parts = customer_selected.split(" - ")
+    video_parts = video_selected.split(" - ")
+    customer_name = f"{customer_parts[0]} - {customer_parts[1]}"
+    video_name = video_parts[0]
     messagebox.showinfo("Rental Processed", f"Rented '{video_name}' to {customer_name}")
+    
+def return_video():
+    selected_customer_index = t3.curselection()
+    selected_video_index = t4.curselection()
+
+    if not selected_customer_index or not selected_video_index:
+        messagebox.showwarning("Selection Required", "Please select a customer and a video to return.")
+        return
+    customer_selected = t3.get(selected_customer_index[0])
+    video_selected = t4.get(selected_video_index[0])
+
+    customer_parts = customer_selected.split(" - ")
+    video_parts = video_selected.split(" - ")
+    customer_name = f"{customer_parts[0]} {customer_parts[1]}"
+    video_name = video_parts[0]
+    messagebox.showinfo("Return Processed", f"{customer_name} returned {video_name}")
 
 tk.Button(rental, text="Rent Video", command=rent_video).pack()
-tk.Button(returnn, text="Return Video").pack()
-
+tk.Button(returnn, text="Return Video", command=return_video).pack()
 
 root.mainloop()
