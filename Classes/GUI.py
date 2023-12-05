@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
 import re
+import json
 
 import Inventory_List_Class
 import Customer_List_Class
@@ -711,7 +712,80 @@ def return_video():
     video_name = video_parts[0]
     messagebox.showinfo("Return Processed", f"{customer_name} returned {video_name}")
 
+def read_cust_list():
+    with open("customer.json", "r") as f:
+        # Load the JSON data from the file
+        data = json.load(f)
+        #Gather variables from each item in the JSON data
+        for item in data:
+            first = item['firstName']
+            last = item['lastName']
+            address = item['address']
+            phone = item['phoneNumber']
+            email = item['email'],
+            
+            #Display Customer List on the window
+            customer_list.insert(tk.END, f"{first.capitalize()} - {last.capitalize()} - {address} - {phone} - {email}")
+
+            #Add customer list to original customer data
+            original_customer_data.append(f"{first.capitalize()} - {last.capitalize()} - {address} - {phone} - {email}")
+
+        #Update the customer list on the rental/return tabs
+        update_t1_with_customer_list()
+        update_t3_with_customer_list()
+    
+def write_cust_list():
+    with open("customer.json", "w") as f:
+        # Convert the object to a JSON serializable format
+        serializable_list = [video.__dict__ for video in CustomerList.cust_list]
+        # Write the JSON serializable object to the file
+        json.dump(serializable_list, f)
+
+def read_inventory():
+    with open("inventory.json", "r") as f:
+        # Load the JSON data from the file
+        data = json.load(f)
+        #Gather variables from each item in the JSON data
+        for item in data:
+            title = item['name']
+            year = item['year']
+            director = item['director']
+            genre = item['genre']
+            rating = item['rating']
+            
+            #Display inventory on the window
+            video_list.insert(tk.END, f"{title} - {year} - {director} - {genre} - {rating}")
+    
+            #Add inventory to original video data
+            original_video_data.append(f"{title} - {year} - {director} - {genre} - {rating}")
+        
+        #Update video list on rental/return tabs
+        update_t2_with_video_list()
+        update_t4_with_video_list()
+
+def write_inventory():
+    with open("inventory.json", "w") as f:
+        # Convert the object to a JSON serializable format
+        serializable_list = [video.__dict__ for video in InventoryList.inventory_list]
+        # Write the JSON serializable object to the file
+        json.dump(serializable_list, f)
+
+#Saves the data from each list to their respective json file
+def save_data_lists():
+        write_cust_list()
+        write_inventory()
+        root.destroy()
+    
+
 tk.Button(rental, text="Rent Video", command=rent_video).pack()
 tk.Button(returnn, text="Return Video", command=return_video).pack()
 
+#Reads the date from the json files and loads them to the window
+read_inventory()
+read_cust_list()
+
+#Saves the lists when the program closes
+root.protocol("WM_DELETE_WINDOW", save_data_lists)
+
 root.mainloop()
+
