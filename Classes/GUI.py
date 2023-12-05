@@ -44,13 +44,22 @@ customer_list.grid(row=1, column=0, padx=10, pady=5, rowspan=4)
 # Original customer data (for filtering purposes)
 original_customer_data = []
 
-regex1 = r'^[1-9]\d{2}\d{3}\d{4}$'
+def format_phone_number(number):
+    digits = ''.join([char for char in number if char.isdigit()])
+    if len(digits) == 10:
+        formatted_number = f"({digits[:3]}){digits[3:6]}-{digits[6:]}"
+        return formatted_number
+    else:
+        return "Invalid phone number format"
+
+regex1 = r'\(\d{3}\)\d{3}-\d{4}'
 def valid_phone(x):
-    phone = x.get()
+    phone = x
     if not phone:
         messagebox.showerror("Error", "Phone number cannot be empty")
         return False
     elif not(re.match(regex1, phone)):
+        
         messagebox.showerror("Error", "Invalid phone number.")
         return False
     return True
@@ -234,11 +243,12 @@ def add_customer():
     
     
     def save_customer():
-        if valid_fName(fName_entry) and valid_lName(lName_entry) and valid_phone(phone_entry) and valid_email(email_entry) and valid_address(address_entry) and not isDuplicateCustomer(email_entry.get()):
+        formatted_phone_entry = format_phone_number(str(phone_entry.get()))
+        if valid_fName(fName_entry) and valid_lName(lName_entry) and valid_phone(formatted_phone_entry) and valid_email(email_entry) and valid_address(address_entry) and not isDuplicateCustomer(email_entry.get()):
             first_name = fName_entry.get()
             last_name = lName_entry.get()
             customer_address = address_entry.get()
-            customer_phone = phone_entry.get()
+            customer_phone = formatted_phone_entry
             customer_email = email_entry.get()
         
             customer_list.insert(tk.END, f"{first_name.capitalize()} - {last_name.capitalize()} - {customer_address} - {customer_phone} - {customer_email}")
@@ -248,7 +258,7 @@ def add_customer():
 
             #Add customer to list class object
             CustomerList.add_cust(first_name, last_name, customer_address, customer_phone, customer_email)
-            
+
             # Call the function to update t1 with the same data as customer_list
             update_t1_with_customer_list()
             update_t3_with_customer_list()
