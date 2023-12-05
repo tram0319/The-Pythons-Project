@@ -41,6 +41,12 @@ class Inventory_List():
                 return f'Removed: {name} from inventory.'
         return 'Video not found in inventory'
 
+    def get_video(self, name):
+        for video in self.inventory_list:
+            if video.name == name:
+                return video
+        return f'Video was not found in inventory'
+
     def get_inventory_list_by_attribute(self, attribute):
         matching_inventory = []
         for video in self.inventory_list:
