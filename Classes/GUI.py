@@ -248,9 +248,9 @@ def add_customer():
             #Add customer to list class object
             CustomerList.add_cust(first_name, last_name, customer_address, customer_phone, customer_email)
             
-
             # Call the function to update t1 with the same data as customer_list
             update_t1_with_customer_list()
+            update_t3_with_customer_list()
             
             add_window.destroy()
     tk.Button(add_window, text="Save", command=save_customer).grid(row=5, column=0, columnspan=2, pady=10)
@@ -284,9 +284,8 @@ def remove_customer():
         
         customer_list.delete(selected_index)
     
-
-
         update_t1_with_customer_list()
+        update_t3_with_customer_list()
 
 def edit_customer():
     # Function to be executed when "Edit Customer" button is clicked
@@ -337,9 +336,6 @@ def edit_customer():
             edited_phone = phone_entry.get()
             edited_email = email_entry.get()
 
-
-            # Perform any validation or processing needed
-
             # Update the customer_list with the edited customer information
             index = 0
             for i in original_customer_data:
@@ -354,9 +350,8 @@ def edit_customer():
             customer_list.delete(selected_index)
             customer_list.insert(tk.END, f"{edited_first_name.capitalize()} - {edited_last_name.capitalize()} - {edited_address} - {edited_phone} - {edited_email}")
 
-                       
-
             update_t1_with_customer_list()
+            update_t3_with_customer_list()
             
             # Close the edit_window
             edit_window.destroy()
@@ -429,7 +424,6 @@ video_list.grid(row=1, column=0, padx=10, pady=5, rowspan=4)
 original_video_data = []
 
 #buttons in video frame
-# Buttons in video frame
 def add_video():
     # Function to be executed when "Add Video" button is clicked
     # Create a new Toplevel window for entering video information
@@ -505,6 +499,7 @@ def remove_video():
         video_list.delete(selected_index)
 
         update_t2_with_video_list()
+        update_t4_with_video_list()
 
 def edit_video():
     # Function to be executed when "Edit Video" button is clicked
@@ -575,6 +570,7 @@ def edit_video():
             InventoryList.add_video(title, year, director, rating, genre, availability)
 
             update_t2_with_video_list()
+            update_t4_with_video_list()
         
             # Close the edit_window
             edit_window.destroy()
