@@ -641,6 +641,7 @@ tk.Button(video, text="Filter By", command=vFilter_by).grid(row=4, column=1, sti
 
 # Rental Information label
 tk.Label(rental, text="Start a Rental").pack()
+tk.Label(returnn, text="Start a Return").pack()
 
 def on_scroll(*args):
     t1.yview(*args)
