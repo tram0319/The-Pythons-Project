@@ -607,28 +607,25 @@ def vFilter_by():
             # Iterate through the original video data and add matching videos to the listbox
         for original_video_info in original_video_data:
             if filter_option == "Title":
-                title, _, _, _, _ = parse_video_info(original_video_info)
+                title, _, _, _, _, _ = parse_video_info(original_video_info)
                 if filter_value.lower() in title.lower():
                     video_list.insert(tk.END, original_video_info)
             elif filter_option == "Year":
-                _, year, _, _, _ = parse_video_info(original_video_info)
+                _, year, _, _, _, _ = parse_video_info(original_video_info)
                 if filter_value in year:
                     video_list.insert(tk.END, original_video_info)
             elif filter_option == "Director":
-                _, _, director, _, _ = parse_video_info(original_video_info)
+                _, _, director, _, _, _ = parse_video_info(original_video_info)
                 if filter_value.lower() in director.lower():
                     video_list.insert(tk.END, original_video_info)
             elif filter_option == "Genre":
-                _, _, _, genre, _ = parse_video_info(original_video_info)
+                _, _, _, genre, _, _ = parse_video_info(original_video_info)
                 if filter_value.lower() in genre.lower():
                     video_list.insert(tk.END, original_video_info)
             elif filter_option == "Rating":
-                _, _, _, _, rating = parse_video_info(original_video_info)
+                _, _, _, _, rating, _ = parse_video_info(original_video_info)
                 if filter_value.lower() in rating.lower():
                     video_list.insert(tk.END, original_video_info)
-
-
-
 
         # Close the filter_window
         filter_window.destroy()
