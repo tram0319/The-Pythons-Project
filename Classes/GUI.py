@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
 import re
+import json
 
 import Inventory_List_Class
 import Customer_List_Class
@@ -44,13 +45,22 @@ customer_list.grid(row=1, column=0, padx=10, pady=5, rowspan=4)
 # Original customer data (for filtering purposes)
 original_customer_data = []
 
-regex1 = r'^[1-9]\d{2}\d{3}\d{4}$'
+def format_phone_number(number):
+    digits = ''.join([char for char in number if char.isdigit()])
+    if len(digits) == 10:
+        formatted_number = f"({digits[:3]}){digits[3:6]}-{digits[6:]}"
+        return formatted_number
+    else:
+        return "Invalid phone number format"
+
+regex1 = r'\(\d{3}\)\d{3}-\d{4}'
 def valid_phone(x):
-    phone = x.get()
+    phone = x
     if not phone:
         messagebox.showerror("Error", "Phone number cannot be empty")
         return False
     elif not(re.match(regex1, phone)):
+        
         messagebox.showerror("Error", "Invalid phone number.")
         return False
     return True
@@ -209,6 +219,7 @@ def add_customer():
     # Create a new Toplevel window for entering customer information
     add_window = tk.Toplevel(customer)
     add_window.title("Add Customer")
+    add_window.attributes('-topmost', True)
 
     # Add entry fields, labels, and other widgets for customer information
     tk.Label(add_window, text="Customer First Name:").grid(row=0, column=0, padx=10, pady=5)
@@ -233,11 +244,12 @@ def add_customer():
     
     
     def save_customer():
-        if valid_fName(fName_entry) and valid_lName(lName_entry) and valid_phone(phone_entry) and valid_email(email_entry) and valid_address(address_entry) and not isDuplicateCustomer(email_entry.get()):
+        formatted_phone_entry = format_phone_number(str(phone_entry.get()))
+        if valid_fName(fName_entry) and valid_lName(lName_entry) and valid_phone(formatted_phone_entry) and valid_email(email_entry) and valid_address(address_entry) and not isDuplicateCustomer(email_entry.get()):
             first_name = fName_entry.get()
             last_name = lName_entry.get()
             customer_address = address_entry.get()
-            customer_phone = phone_entry.get()
+            customer_phone = formatted_phone_entry
             customer_email = email_entry.get()
         
             customer_list.insert(tk.END, f"{first_name.capitalize()} - {last_name.capitalize()} - {customer_address} - {customer_phone} - {customer_email}")
@@ -247,7 +259,7 @@ def add_customer():
 
             #Add customer to list class object
             CustomerList.add_cust(first_name, last_name, customer_address, customer_phone, customer_email)
-            
+
             # Call the function to update t1 with the same data as customer_list
             update_t1_with_customer_list()
             update_t3_with_customer_list()
@@ -303,6 +315,7 @@ def edit_customer():
     # Create a new Toplevel window for editing customer information
     edit_window = tk.Toplevel(customer)
     edit_window.title("Edit Customer")
+    edit_window.attributes('-topmost', True)
 
     # Add entry fields, labels, and other widgets for customer information
 
@@ -369,6 +382,7 @@ def filter_by():
     # Create a new Toplevel window for selecting the filter option
     filter_window = tk.Toplevel(customer)
     filter_window.title("Filter Customers")
+    filter_window.attributes('-topmost', True)
 
     # Add a dropdown menu for selecting the filter option
     filter_var = tk.StringVar()
@@ -429,6 +443,7 @@ def add_video():
     # Create a new Toplevel window for entering video information
     add_window = tk.Toplevel(video)
     add_window.title("Add Video")
+    add_window.attributes('-topmost', True)
 
     # Add entry fields, labels, and other widgets for customer information
     tk.Label(add_window, text="Title:").grid(row=0, column=0, padx=10, pady=5)
@@ -517,6 +532,7 @@ def edit_video():
     # Create a new Toplevel window for editing video information
     edit_window = tk.Toplevel(video)
     edit_window.title("Edit Video")
+    edit_window.attributes('-topmost', True)
 
     # Add entry fields, labels, and other widgets for video information
 
@@ -706,7 +722,80 @@ def return_video():
     video_name = video_parts[0]
     messagebox.showinfo("Return Processed", f"{customer_name} returned {video_name}")
 
+def read_cust_list():
+    with open("customer.json", "r") as f:
+        # Load the JSON data from the file
+        data = json.load(f)
+        #Gather variables from each item in the JSON data
+        for item in data:
+            first = item['firstName']
+            last = item['lastName']
+            address = item['address']
+            phone = item['phoneNumber']
+            email = item['email'],
+            
+            #Display Customer List on the window
+            customer_list.insert(tk.END, f"{first.capitalize()} - {last.capitalize()} - {address} - {phone} - {email}")
+
+            #Add customer list to original customer data
+            original_customer_data.append(f"{first.capitalize()} - {last.capitalize()} - {address} - {phone} - {email}")
+
+        #Update the customer list on the rental/return tabs
+        update_t1_with_customer_list()
+        update_t3_with_customer_list()
+    
+def write_cust_list():
+    with open("customer.json", "w") as f:
+        # Convert the object to a JSON serializable format
+        serializable_list = [video.__dict__ for video in CustomerList.cust_list]
+        # Write the JSON serializable object to the file
+        json.dump(serializable_list, f)
+
+def read_inventory():
+    with open("inventory.json", "r") as f:
+        # Load the JSON data from the file
+        data = json.load(f)
+        #Gather variables from each item in the JSON data
+        for item in data:
+            title = item['name']
+            year = item['year']
+            director = item['director']
+            genre = item['genre']
+            rating = item['rating']
+            
+            #Display inventory on the window
+            video_list.insert(tk.END, f"{title} - {year} - {director} - {genre} - {rating}")
+    
+            #Add inventory to original video data
+            original_video_data.append(f"{title} - {year} - {director} - {genre} - {rating}")
+        
+        #Update video list on rental/return tabs
+        update_t2_with_video_list()
+        update_t4_with_video_list()
+
+def write_inventory():
+    with open("inventory.json", "w") as f:
+        # Convert the object to a JSON serializable format
+        serializable_list = [video.__dict__ for video in InventoryList.inventory_list]
+        # Write the JSON serializable object to the file
+        json.dump(serializable_list, f)
+
+#Saves the data from each list to their respective json file
+def save_data_lists():
+        write_cust_list()
+        write_inventory()
+        root.destroy()
+    
+
 tk.Button(rental, text="Rent Video", command=rent_video).pack()
 tk.Button(returnn, text="Return Video", command=return_video).pack()
 
+#Reads the date from the json files and loads them to the window
+read_inventory()
+read_cust_list()
+
+#Saves the lists when the program closes
+root.protocol("WM_DELETE_WINDOW", save_data_lists)
+
 root.mainloop()
+
