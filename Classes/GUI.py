@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
 import re
+import json
 
 import Inventory_List_Class
 import Customer_List_Class
@@ -44,13 +45,22 @@ customer_list.grid(row=1, column=0, padx=10, pady=5, rowspan=4)
 # Original customer data (for filtering purposes)
 original_customer_data = []
 
-regex1 = r'^[1-9]\d{2}\d{3}\d{4}$'
+def format_phone_number(number):
+    digits = ''.join([char for char in number if char.isdigit()])
+    if len(digits) == 10:
+        formatted_number = f"({digits[:3]}){digits[3:6]}-{digits[6:]}"
+        return formatted_number
+    else:
+        return "Invalid phone number format"
+
+regex1 = r'\(\d{3}\)\d{3}-\d{4}'
 def valid_phone(x):
-    phone = x.get()
+    phone = x
     if not phone:
         messagebox.showerror("Error", "Phone number cannot be empty")
         return False
     elif not(re.match(regex1, phone)):
+        
         messagebox.showerror("Error", "Invalid phone number.")
         return False
     return True
@@ -234,11 +244,12 @@ def add_customer():
     
     
     def save_customer():
-        if valid_fName(fName_entry) and valid_lName(lName_entry) and valid_phone(phone_entry) and valid_email(email_entry) and valid_address(address_entry) and not isDuplicateCustomer(email_entry.get()):
+        formatted_phone_entry = format_phone_number(str(phone_entry.get()))
+        if valid_fName(fName_entry) and valid_lName(lName_entry) and valid_phone(formatted_phone_entry) and valid_email(email_entry) and valid_address(address_entry) and not isDuplicateCustomer(email_entry.get()):
             first_name = fName_entry.get()
             last_name = lName_entry.get()
             customer_address = address_entry.get()
-            customer_phone = phone_entry.get()
+            customer_phone = formatted_phone_entry
             customer_email = email_entry.get()
         
             customer_list.insert(tk.END, f"{first_name.capitalize()} - {last_name.capitalize()} - {customer_address} - {customer_phone} - {customer_email}")
@@ -248,7 +259,7 @@ def add_customer():
 
             #Add customer to list class object
             CustomerList.add_cust(first_name, last_name, customer_address, customer_phone, customer_email)
-            
+
             # Call the function to update t1 with the same data as customer_list
             update_t1_with_customer_list()
             update_t3_with_customer_list()
@@ -366,12 +377,23 @@ def parse_customer_info(customer_info):
     parts = customer_info.split(" - ", 4)
     return parts[0], parts[1], parts[2], parts[3], parts[4] if len(parts) > 4 else ""
 
+filtered_customer_data = []
+filtered_video_data = []
+def clear_filter():
+    global filtered_customer_data, filtered_video_data
+    customer_list.delete(0, tk.END)
+    video_list.delete(0, tk.END)
+
+    for customer_info in original_customer_data:
+        customer_list.insert(tk.END, customer_info)
+    for video_info in original_video_data:
+        video_list.insert(tk.END, video_info)
+
 def filter_by():
     # Function to be executed when "Filter By" button is clicked
     # Create a new Toplevel window for selecting the filter option
     filter_window = tk.Toplevel(customer)
     filter_window.title("Filter Customers")
-    filter_window.attributes('-topmost', True)
 
     # Add a dropdown menu for selecting the filter option
     filter_var = tk.StringVar()
@@ -388,25 +410,26 @@ def filter_by():
     filter_value_entry = tk.Entry(filter_window)
     filter_value_entry.grid(row=1, column=1, padx=10, pady=5)
 
-    # Function to apply the filter
     def apply_filter():
+        global filtered_customer_data
         filter_option = filter_var.get()
         filter_value = filter_value_entry.get().strip().lower()
 
         customer_list.delete(0, tk.END)  # Clear the current listbox
+        filtered_customer_data = []  # Clear the filtered data
 
         # Iterate through the original customer data and add matching customers to the listbox
         for original_customer_info in original_customer_data:
             original_fName, original_lName, _, _, _ = parse_customer_info(original_customer_info)
             if (
-                (filter_option == "First Name" and filter_value in original_fName.lower())
-                or (filter_option == "Last Name" and filter_value in original_lName.lower())
+                    (filter_option == "First Name" and filter_value in original_fName.lower())
+                    or (filter_option == "Last Name" and filter_value in original_lName.lower())
             ):
                 customer_list.insert(tk.END, original_customer_info)
+                filtered_customer_data.append(original_customer_info)
 
         # Close the filter_window
         filter_window.destroy()
-
     # Button to apply the filter
     tk.Button(filter_window, text="Apply Filter", command=apply_filter).grid(row=2, column=0, columnspan=2, pady=10)
 
@@ -415,6 +438,7 @@ tk.Button(customer, text="Add Customer", command=add_customer).grid(row=1, colum
 tk.Button(customer, text="Remove Customer", command=remove_customer).grid(row=2, column=1, sticky="ew", padx=10, pady=5)
 tk.Button(customer, text="Edit Customer", command=edit_customer).grid(row=3, column=1, sticky="ew", padx=10, pady=5)
 tk.Button(customer, text="Filter By", command=filter_by).grid(row=4, column=1, sticky="ew", padx=10, pady=5)
+tk.Button(customer, text="Clear Filter", command=clear_filter).grid(row=5, column=1, sticky="ew", padx=10, pady=5)
 
 # Video Information label
 tk.Label(video, text="Video Information").grid(row=0, column=0, columnspan=2, pady=5)
@@ -602,12 +626,14 @@ def vFilter_by():
     filter_value_entry = tk.Entry(filter_window)
     filter_value_entry.grid(row=1, column=1, padx=10, pady=5)
 
-        # Function to apply the filter
+    # Function to apply the filter
     def vapply_filter():
+        global filtered_video_data
         filter_option = filter_var.get()
         filter_value = filter_value_entry.get().strip().lower()
 
         video_list.delete(0, tk.END)  # Clear the current listbox
+        filtered_video_data = []  # Clear the filtered data
 
             # Iterate through the original video data and add matching videos to the listbox
         for original_video_info in original_video_data:
@@ -615,22 +641,27 @@ def vFilter_by():
                 title, _, _, _, _, _ = parse_video_info(original_video_info)
                 if filter_value.lower() in title.lower():
                     video_list.insert(tk.END, original_video_info)
+                    filtered_video_data.append(original_video_info)
             elif filter_option == "Year":
                 _, year, _, _, _, _ = parse_video_info(original_video_info)
                 if filter_value in year:
                     video_list.insert(tk.END, original_video_info)
+                    filtered_video_data.append(original_video_info)
             elif filter_option == "Director":
                 _, _, director, _, _, _ = parse_video_info(original_video_info)
                 if filter_value.lower() in director.lower():
                     video_list.insert(tk.END, original_video_info)
+                    filtered_video_data.append(original_video_info)
             elif filter_option == "Genre":
                 _, _, _, genre, _, _ = parse_video_info(original_video_info)
                 if filter_value.lower() in genre.lower():
                     video_list.insert(tk.END, original_video_info)
+                    filtered_video_data.append(original_video_info)
             elif filter_option == "Rating":
                 _, _, _, _, rating, _ = parse_video_info(original_video_info)
                 if filter_value.lower() in rating.lower():
                     video_list.insert(tk.END, original_video_info)
+                    filtered_video_data.append(original_video_info)
 
         # Close the filter_window
         filter_window.destroy()
@@ -643,6 +674,7 @@ tk.Button(video, text="Add Video", command=add_video).grid(row=1, column=1, stic
 tk.Button(video, text="Remove Video", command=remove_video).grid(row=2, column=1, sticky="ew", padx=10, pady=5)
 tk.Button(video, text="Edit Video", command=edit_video).grid(row=3, column=1, sticky="ew", padx=10, pady=5)
 tk.Button(video, text="Filter By", command=vFilter_by).grid(row=4, column=1, sticky="ew", padx=10, pady=5)
+tk.Button(video, text="Clear Filter", command=clear_filter).grid(row=5, column=1, sticky="ew", padx=10, pady=5)
 
 # Rental Information label
 tk.Label(rental, text="Start a Rental").pack()
@@ -711,7 +743,80 @@ def return_video():
     video_name = video_parts[0]
     messagebox.showinfo("Return Processed", f"{customer_name} returned {video_name}")
 
+def read_cust_list():
+    with open("customer.json", "r") as f:
+        # Load the JSON data from the file
+        data = json.load(f)
+        #Gather variables from each item in the JSON data
+        for item in data:
+            first = item['firstName']
+            last = item['lastName']
+            address = item['address']
+            phone = item['phoneNumber']
+            email = item['email'],
+            
+            #Display Customer List on the window
+            customer_list.insert(tk.END, f"{first.capitalize()} - {last.capitalize()} - {address} - {phone} - {email}")
+
+            #Add customer list to original customer data
+            original_customer_data.append(f"{first.capitalize()} - {last.capitalize()} - {address} - {phone} - {email}")
+
+        #Update the customer list on the rental/return tabs
+        update_t1_with_customer_list()
+        update_t3_with_customer_list()
+    
+def write_cust_list():
+    with open("customer.json", "w") as f:
+        # Convert the object to a JSON serializable format
+        serializable_list = [video.__dict__ for video in CustomerList.cust_list]
+        # Write the JSON serializable object to the file
+        json.dump(serializable_list, f)
+
+def read_inventory():
+    with open("inventory.json", "r") as f:
+        # Load the JSON data from the file
+        data = json.load(f)
+        #Gather variables from each item in the JSON data
+        for item in data:
+            title = item['name']
+            year = item['year']
+            director = item['director']
+            genre = item['genre']
+            rating = item['rating']
+            
+            #Display inventory on the window
+            video_list.insert(tk.END, f"{title} - {year} - {director} - {genre} - {rating}")
+    
+            #Add inventory to original video data
+            original_video_data.append(f"{title} - {year} - {director} - {genre} - {rating}")
+        
+        #Update video list on rental/return tabs
+        update_t2_with_video_list()
+        update_t4_with_video_list()
+
+def write_inventory():
+    with open("inventory.json", "w") as f:
+        # Convert the object to a JSON serializable format
+        serializable_list = [video.__dict__ for video in InventoryList.inventory_list]
+        # Write the JSON serializable object to the file
+        json.dump(serializable_list, f)
+
+#Saves the data from each list to their respective json file
+def save_data_lists():
+        write_cust_list()
+        write_inventory()
+        root.destroy()
+    
+
 tk.Button(rental, text="Rent Video", command=rent_video).pack()
 tk.Button(returnn, text="Return Video", command=return_video).pack()
 
+#Reads the date from the json files and loads them to the window
+read_inventory()
+read_cust_list()
+
+#Saves the lists when the program closes
+root.protocol("WM_DELETE_WINDOW", save_data_lists)
+
 root.mainloop()
+
