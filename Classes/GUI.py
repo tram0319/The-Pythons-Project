@@ -377,12 +377,23 @@ def parse_customer_info(customer_info):
     parts = customer_info.split(" - ", 4)
     return parts[0], parts[1], parts[2], parts[3], parts[4] if len(parts) > 4 else ""
 
+filtered_customer_data = []
+filtered_video_data = []
+def clear_filter():
+    global filtered_customer_data, filtered_video_data
+    customer_list.delete(0, tk.END)
+    video_list.delete(0, tk.END)
+
+    for customer_info in original_customer_data:
+        customer_list.insert(tk.END, customer_info)
+    for video_info in original_video_data:
+        video_list.insert(tk.END, video_info)
+
 def filter_by():
     # Function to be executed when "Filter By" button is clicked
     # Create a new Toplevel window for selecting the filter option
     filter_window = tk.Toplevel(customer)
     filter_window.title("Filter Customers")
-    filter_window.attributes('-topmost', True)
 
     # Add a dropdown menu for selecting the filter option
     filter_var = tk.StringVar()
@@ -399,25 +410,26 @@ def filter_by():
     filter_value_entry = tk.Entry(filter_window)
     filter_value_entry.grid(row=1, column=1, padx=10, pady=5)
 
-    # Function to apply the filter
     def apply_filter():
+        global filtered_customer_data
         filter_option = filter_var.get()
         filter_value = filter_value_entry.get().strip().lower()
 
         customer_list.delete(0, tk.END)  # Clear the current listbox
+        filtered_customer_data = []  # Clear the filtered data
 
         # Iterate through the original customer data and add matching customers to the listbox
         for original_customer_info in original_customer_data:
             original_fName, original_lName, _, _, _ = parse_customer_info(original_customer_info)
             if (
-                (filter_option == "First Name" and filter_value in original_fName.lower())
-                or (filter_option == "Last Name" and filter_value in original_lName.lower())
+                    (filter_option == "First Name" and filter_value in original_fName.lower())
+                    or (filter_option == "Last Name" and filter_value in original_lName.lower())
             ):
                 customer_list.insert(tk.END, original_customer_info)
+                filtered_customer_data.append(original_customer_info)
 
         # Close the filter_window
         filter_window.destroy()
-
     # Button to apply the filter
     tk.Button(filter_window, text="Apply Filter", command=apply_filter).grid(row=2, column=0, columnspan=2, pady=10)
 
@@ -426,6 +438,7 @@ tk.Button(customer, text="Add Customer", command=add_customer).grid(row=1, colum
 tk.Button(customer, text="Remove Customer", command=remove_customer).grid(row=2, column=1, sticky="ew", padx=10, pady=5)
 tk.Button(customer, text="Edit Customer", command=edit_customer).grid(row=3, column=1, sticky="ew", padx=10, pady=5)
 tk.Button(customer, text="Filter By", command=filter_by).grid(row=4, column=1, sticky="ew", padx=10, pady=5)
+tk.Button(customer, text="Clear Filter", command=clear_filter).grid(row=5, column=1, sticky="ew", padx=10, pady=5)
 
 # Video Information label
 tk.Label(video, text="Video Information").grid(row=0, column=0, columnspan=2, pady=5)
@@ -613,12 +626,14 @@ def vFilter_by():
     filter_value_entry = tk.Entry(filter_window)
     filter_value_entry.grid(row=1, column=1, padx=10, pady=5)
 
-        # Function to apply the filter
+    # Function to apply the filter
     def vapply_filter():
+        global filtered_video_data
         filter_option = filter_var.get()
         filter_value = filter_value_entry.get().strip().lower()
 
         video_list.delete(0, tk.END)  # Clear the current listbox
+        filtered_video_data = []  # Clear the filtered data
 
             # Iterate through the original video data and add matching videos to the listbox
         for original_video_info in original_video_data:
@@ -626,22 +641,27 @@ def vFilter_by():
                 title, _, _, _, _, _ = parse_video_info(original_video_info)
                 if filter_value.lower() in title.lower():
                     video_list.insert(tk.END, original_video_info)
+                    filtered_video_data.append(original_video_info)
             elif filter_option == "Year":
                 _, year, _, _, _, _ = parse_video_info(original_video_info)
                 if filter_value in year:
                     video_list.insert(tk.END, original_video_info)
+                    filtered_video_data.append(original_video_info)
             elif filter_option == "Director":
                 _, _, director, _, _, _ = parse_video_info(original_video_info)
                 if filter_value.lower() in director.lower():
                     video_list.insert(tk.END, original_video_info)
+                    filtered_video_data.append(original_video_info)
             elif filter_option == "Genre":
                 _, _, _, genre, _, _ = parse_video_info(original_video_info)
                 if filter_value.lower() in genre.lower():
                     video_list.insert(tk.END, original_video_info)
+                    filtered_video_data.append(original_video_info)
             elif filter_option == "Rating":
                 _, _, _, _, rating, _ = parse_video_info(original_video_info)
                 if filter_value.lower() in rating.lower():
                     video_list.insert(tk.END, original_video_info)
+                    filtered_video_data.append(original_video_info)
 
         # Close the filter_window
         filter_window.destroy()
@@ -654,6 +674,7 @@ tk.Button(video, text="Add Video", command=add_video).grid(row=1, column=1, stic
 tk.Button(video, text="Remove Video", command=remove_video).grid(row=2, column=1, sticky="ew", padx=10, pady=5)
 tk.Button(video, text="Edit Video", command=edit_video).grid(row=3, column=1, sticky="ew", padx=10, pady=5)
 tk.Button(video, text="Filter By", command=vFilter_by).grid(row=4, column=1, sticky="ew", padx=10, pady=5)
+tk.Button(video, text="Clear Filter", command=clear_filter).grid(row=5, column=1, sticky="ew", padx=10, pady=5)
 
 # Rental Information label
 tk.Label(rental, text="Start a Rental").pack()
