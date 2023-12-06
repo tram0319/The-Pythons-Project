@@ -389,9 +389,6 @@ def clear_filter():
     for video_info in original_video_data:
         video_list.insert(tk.END, video_info)
 
-    filtered_customer_data = []
-    filtered_video_data = []
-
 def filter_by():
     # Function to be executed when "Filter By" button is clicked
     # Create a new Toplevel window for selecting the filter option
