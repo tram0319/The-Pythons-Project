@@ -169,24 +169,26 @@ def char_limit(c, limit):
         return False
     return True
 
-def isDuplicateCustomer(email):
+def isDuplicateCustomer(firstName, lastName, address, phone, email):
+    #print(firstName, lastName, address, phone, email)
     list = CustomerList.get_cust_list()
     if len(list) > 0:
         i = 0
         while i != len(list):
-            if list[i].email == email:
+            #print(list[i].firstName, list[i].lastName, list[i].address, list[i].phoneNumber, list[i].email)
+            if list[i].firstName == firstName and list[i].lastName == lastName and list[i].address == address and list[i].phoneNumber == phone and list[i].email == email:
                 messagebox.showerror("Error", "Customer already exists")
                 return True
             i += 1
         return False 
     return False
 
-def isDuplicateVideo(title, year):
+def isDuplicateVideo(title, year, director, rating, genre):
     inv = InventoryList.get_inventory()
     if len(inv) > 0:
         i = 0
         while i != len(inv):
-            if inv[i].name == title and inv[i].year == year:
+            if inv[i].name == title and inv[i].year == year and inv[i].director == director and inv[i].rating.upper() == rating.upper() and inv[i].genre == genre:
                 messagebox.showerror("Error", "Video already exists")
                 return True
             i += 1
@@ -245,7 +247,8 @@ def add_customer():
     
     def save_customer():
         formatted_phone_entry = format_phone_number(str(phone_entry.get()))
-        if valid_fName(fName_entry) and valid_lName(lName_entry) and valid_phone(formatted_phone_entry) and valid_email(email_entry) and valid_address(address_entry) and not isDuplicateCustomer(email_entry.get()):
+        if valid_fName(fName_entry) and valid_lName(lName_entry) and valid_phone(formatted_phone_entry) and valid_email(email_entry) and valid_address(address_entry) \
+                and not isDuplicateCustomer(fName_entry.get(), lName_entry.get(), address_entry.get(), formatted_phone_entry, email_entry.get()):
             first_name = fName_entry.get()
             last_name = lName_entry.get()
             customer_address = address_entry.get()
@@ -341,8 +344,10 @@ def edit_customer():
 
     # Function to save edited customer information
     def save_edited_customer():
+        formatted_phone_entry = format_phone_number(str(phone_entry.get()))
         # Get values from entry fields
-        if valid_fName(fName_entry) and valid_lName(lName_entry) and valid_phone(phone_entry) and valid_email(email_entry) and valid_address(address_entry) and not isDuplicateCustomer(email_entry.get()):
+        if valid_fName(fName_entry) and valid_lName(lName_entry) and valid_phone(formatted_phone_entry) and valid_email(email_entry) and valid_address(address_entry) \
+                and not isDuplicateCustomer(fName_entry.get(), lName_entry.get(), address_entry.get(), formatted_phone_entry, email_entry.get()):
             edited_first_name = fName_entry.get()
             edited_last_name = lName_entry.get()
             edited_address = address_entry.get()
@@ -480,7 +485,8 @@ def add_video():
     rating_entry.grid(row=4, column=1, padx=10, pady=5)
 
     def save_video():
-        if valid_title(title_entry) and valid_year(year_entry) and valid_director(director_entry) and valid_genre(genre_entry) and valid_rating(rating_entry) and not isDuplicateVideo(title_entry.get(), year_entry.get()):
+        if valid_title(title_entry) and valid_year(year_entry) and valid_director(director_entry) and valid_genre(genre_entry) and valid_rating(rating_entry) \
+                and not isDuplicateVideo(title_entry.get(), year_entry.get(), director_entry.get(), rating_entry.get(), genre_entry.get()):
             title = title_entry.get()
             year = year_entry.get()
             director = director_entry.get()
@@ -571,7 +577,8 @@ def edit_video():
 
     # Function to save edited video information
     def save_edited_video():
-        if valid_title(title_entry) and valid_year(year_entry) and valid_director(director_entry) and valid_genre(genre_entry) and valid_rating(rating_entry) and not isDuplicateVideo(title_entry.get(), year_entry.get()):
+        if valid_title(title_entry) and valid_year(year_entry) and valid_director(director_entry) and valid_genre(genre_entry) and valid_rating(rating_entry) \
+                and not isDuplicateVideo(title_entry.get(), year_entry.get(), director_entry.get(), rating_entry.get(), genre_entry.get()):
             edited_title = title_entry.get()
             edited_year = year_entry.get()
             edited_director = director_entry.get()
