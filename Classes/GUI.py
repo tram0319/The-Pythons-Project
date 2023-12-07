@@ -170,7 +170,7 @@ def char_limit(c, limit):
     return True
 
 def isDuplicateCustomer(firstName, lastName, address, phone, email):
-    #print(firstName, lastName, address, phone, email)
+    #print("New Customer: " + firstName, lastName, address, phone, email)
     list = CustomerList.get_cust_list()
     if len(list) > 0:
         i = 0
@@ -294,7 +294,7 @@ def remove_customer():
                 original_customer_data.pop(index)
                 break
             index += 1
-        
+
         CustomerList.remove_cust(first_name, last_name)
         
         customer_list.delete(selected_index)
@@ -760,7 +760,7 @@ def read_cust_list():
             last = item['lastName']
             address = item['address']
             phone = item['phoneNumber']
-            email = item['email'],
+            email = item['email']
             
             #Display Customer List on the window
             customer_list.insert(tk.END, f"{first.capitalize()} - {last.capitalize()} - {address} - {phone} - {email}")
@@ -790,12 +790,13 @@ def read_inventory():
             director = item['director']
             genre = item['genre']
             rating = item['rating']
+            availability = item['rentalStatus']
             
             #Display inventory on the window
-            video_list.insert(tk.END, f"{title} - {year} - {director} - {genre} - {rating}")
+            video_list.insert(tk.END, f"{title} - {year} - {director} - {genre} - {rating} - {availability}")
     
             #Add inventory to original video data
-            original_video_data.append(f"{title} - {year} - {director} - {genre} - {rating}")
+            original_video_data.append(f"{title} - {year} - {director} - {genre} - {rating} - {availability}")
         
         #Update video list on rental/return tabs
         update_t2_with_video_list()

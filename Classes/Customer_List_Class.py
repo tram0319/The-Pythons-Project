@@ -22,7 +22,7 @@ class Customer_List:
                 self.cust_list.append(new_cust)
 
     def add_cust(self, firstName, lastName, address, phoneNumber, email):
-        if re.match("^[a-zA-Z]+$", firstName) and re.match("^[a-zA-Z ]+$", firstName) and phoneNumber.isnumeric():
+        if re.match("^[a-zA-Z]+$", firstName) and re.match("^[a-zA-Z ]+$", firstName):
             new_cust = Customer(firstName, lastName, address, phoneNumber, email, [])
             self.cust_list.append(new_cust)
             return f'Added: {firstName, lastName} to customer.'
@@ -38,7 +38,7 @@ class Customer_List:
 
     def remove_cust(self, firstName, lastName):
         for customer in self.cust_list:
-            if customer.firstName == firstName and customer.lastName == lastName:
+            if customer.firstName.capitalize() == firstName and customer.lastName.capitalize() == lastName:
                 self.cust_list.remove(customer)
                 return f"Removed {customer.firstName + ' ' + customer.lastName} from the list of customers"
         return f'Customer not found in the list of customers'
