@@ -1,1 +1,1 @@
-[{"name": "Test", "year": 2023, "director": "John Doe", "rating": "G", "genre": "Test", "rentalStatus": "Available"}, {"name": "Titanic", "year": "1997", "director": "James Cameron", "rating": "PG-13", "genre": "Drama", "rentalStatus": "Available"}]
+[{"name": "Test", "year": "2023", "director": "John Doe", "rating": "G", "genre": "Test", "rentalStatus": "Available"}, {"name": "Titanic", "year": "1997", "director": "James Cameron", "rating": "PG-13", "genre": "Drama", "rentalStatus": "Available"}]
