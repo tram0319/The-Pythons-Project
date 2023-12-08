@@ -21,9 +21,9 @@ class Customer_List:
                 # Add the new Video object to the inventory_list
                 self.cust_list.append(new_cust)
 
-    def add_cust(self, firstName, lastName, address, phoneNumber, email):
+    def add_cust(self, firstName, lastName, address, phoneNumber, email, currentRentals):
         if re.match("^[a-zA-Z]+$", firstName) and re.match("^[a-zA-Z ]+$", firstName):
-            new_cust = Customer(firstName, lastName, address, phoneNumber, email, [])
+            new_cust = Customer(firstName, lastName, address, phoneNumber, email, currentRentals)
             self.cust_list.append(new_cust)
             return f'Added: {firstName, lastName} to customer.'
         elif not re.match("^[a-zA-Z]+$", firstName):

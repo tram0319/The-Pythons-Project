@@ -6,7 +6,6 @@ import json
 
 import Inventory_List_Class
 import Customer_List_Class
-import Customer_Class
 
 InventoryList = Inventory_List_Class.Inventory_List()
 CustomerList = Customer_List_Class.Customer_List()
@@ -258,7 +257,7 @@ def add_customer():
             original_customer_data.append(f"{first_name.capitalize()} - {last_name.capitalize()} - {customer_address} - {customer_phone} - {customer_email}")
 
             #Add customer to list class object
-            CustomerList.add_cust(first_name, last_name, customer_address, customer_phone, customer_email)
+            CustomerList.add_cust(first_name, last_name, customer_address, customer_phone, customer_email, [])
 
             # Call the function to update t1 with the same data as customer_list
             update_t1_with_customer_list()
@@ -714,19 +713,22 @@ t4.config(yscrollcommand=t4_scrollbar.set)
 
 def update_t4_with_current_rentals(selected_customer):
     t4.delete(0, tk.END)  # Clear the existing items in t4
-    current_rentals = selected_customer.getCurrentRentals()
+    current_rentals = selected_customer.currentRentals
     for rental in current_rentals:
-        t4.insert(tk.END, f"{rental.getName()} - {rental.getYear()} - {rental.getDirector()} - {rental.getGenre()} - {rental.getRating()} - {rental.getRentalStatus()}")
+        t4.insert(tk.END, rental)
 
 def handle_customer_selection(event):
     selected_customer_index = t3.curselection()
     if selected_customer_index:
         selected_customer = t3.get(selected_customer_index[0])
+        selected_customer_info = selected_customer.split(" - ")
+        selected_customer = CustomerList.get_cust(selected_customer_info[0], selected_customer_info[1])
         update_t4_with_current_rentals(selected_customer)
     else:
         t4.delete(0, tk.END)  # Clear t4 if no customer is selected
 
 t3.bind("<<ListboxSelect>>", handle_customer_selection)
+
 
 def rent_video():
     selected_customer_index = t1.curselection()
@@ -735,16 +737,46 @@ def rent_video():
     if not selected_customer_index or not selected_video_index:
         messagebox.showwarning("Selection Required", "Please select a customer and a video to rent.")
         return
+    customer_selected = t1.get(selected_customer_index[0])
+    video_selected = t2.get(selected_video_index[0])
 
-    customer_selected = CustomerList.get_cust_list()[selected_customer_index[0]]
-    video_selected = InventoryList.get_inventory()[selected_video_index[0]]
+    customer_parts = customer_selected.split(" - ")
 
-    # Rent the video to the customer
-    customer_selected.addRental(video_selected)
-    messagebox.showinfo("Rental Processed", f"Rented '{video_selected.getName()}' to {customer_selected.getFirstName()} {customer_selected.getLastName()}")
+    customer_fName = customer_parts[0]
+    customer_lName = customer_parts[1]
+    customer_rentals = CustomerList.get_cust(customer_fName, customer_lName).currentRentals
+
+    customer_name = f"{customer_fName} - {customer_lName}"
+
+    video_parts = video_selected.split(" - ")
+
+    video_name = video_parts[0]
+    video_year = video_parts[1]
+    video_director = video_parts[2]
+    video_rating = video_parts[4]
+    video_genre = video_parts[3]
+
+    customer_rentals.append(f"{video_name} - {video_year} - {video_director} - {video_genre} - {video_rating} - Rented")
+
+    index = 0
+    for i in original_video_data:
+        if i == selected_video_index:
+            original_video_data.pop(index)
+            original_video_data.append( f"{video_name} - {video_year} - {video_director} - {video_genre} - {video_rating} - Rented")
+            break
+        index += 1
+
+    InventoryList.remove_video(video_name)
+    video_list.delete(selected_video_index)
+    video_list.insert(tk.END, f"{video_name} - {video_year} - {video_director} - {video_genre} - {video_rating} - Rented")
+    InventoryList.add_video(video_name, video_year, video_director, video_rating, video_genre, "Rented")
 
     update_t1_with_customer_list()
     update_t2_with_video_list()
+    update_t3_with_customer_list()
+
+
+    messagebox.showinfo("Rental Processed", f"Rented '{video_name}' to {customer_name}")
     
 def return_video():
     selected_customer_index = t3.curselection()
@@ -753,15 +785,49 @@ def return_video():
     if not selected_customer_index or not selected_video_index:
         messagebox.showwarning("Selection Required", "Please select a customer and a video to return.")
         return
+    customer_selected = t3.get(selected_customer_index[0])
+    video_selected = t4.get(selected_video_index[0])
 
-    customer_selected = CustomerList.get_cust_list()[selected_customer_index[0]]
-    video_selected = InventoryList.get_inventory()[selected_video_index[0]]
+    customer_parts = customer_selected.split(" - ")
 
-    # Rent the video to the customer
-    customer_selected.removeRental(video_selected)
-    messagebox.showinfo("Return Processed", f"{customer_selected.getFirstName()} {customer_selected.getLastName()} returned '{video_selected.getName()}'")
-    
+    customer_fName = customer_parts[0]
+    customer_lName = customer_parts[1]
+    customer_rentals = CustomerList.get_cust(customer_fName, customer_lName).currentRentals
+
+    customer_name = f"{customer_fName} - {customer_lName}"
+
+    video_parts = video_selected.split(" - ")
+
+    video_name = video_parts[0]
+    video_year = video_parts[1]
+    video_director = video_parts[2]
+    video_rating = video_parts[4]
+    video_genre = video_parts[3]
+
+    try:
+        customer_rentals.remove(f"{video_name} - {video_year} - {video_director} - {video_genre} - {video_rating} - Rented")
+    except:
+        print("Video not found in customer's rentals")
+
+    index = 0
+    for i in original_video_data:
+        if i == selected_video_index:
+            original_video_data.pop(index)
+            original_video_data.append( f"{video_name} - {video_year} - {video_director} - {video_genre} - {video_rating} - Available")
+            break
+        index += 1
+
+    InventoryList.remove_video(video_name)
+    video_list.delete(selected_video_index)
+    video_list.insert(tk.END, f"{video_name} - {video_year} - {video_director} - {video_genre} - {video_rating} - Available")
+    InventoryList.add_video(video_name, video_year, video_director, video_rating, video_genre, "Available")
+
+    update_t1_with_customer_list()
+    update_t2_with_video_list()
     update_t3_with_customer_list()
+    update_t4_with_current_rentals(CustomerList.get_cust(customer_fName, customer_lName))
+
+    messagebox.showinfo("Return Processed", f"{customer_name} returned {video_name}")
 
 def read_cust_list():
     with open("customer.json", "r") as f:
@@ -813,7 +879,6 @@ def read_inventory():
         
         #Update video list on rental/return tabs
         update_t2_with_video_list()
-        update_t4_with_video_list()
 
 def write_inventory():
     with open("inventory.json", "w") as f:
