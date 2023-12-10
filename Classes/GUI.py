@@ -38,7 +38,7 @@ notebook.add(returnn, text='Return')
 tk.Label(customer, text="Customer Information").grid(row=0, column=0, columnspan=2, pady=5)
 
 # List of customers
-customer_list = tk.Listbox(customer, width=75, height=20)
+customer_list = tk.Listbox(customer, width=100, height=20)
 customer_list.grid(row=1, column=0, padx=10, pady=5, rowspan=4)
 
 # Original customer data (for filtering purposes)
@@ -245,16 +245,16 @@ def add_customer():
         formatted_phone_entry = format_phone_number(str(phone_entry.get()))
         if valid_fName(fName_entry) and valid_lName(lName_entry) and valid_phone(formatted_phone_entry) and valid_email(email_entry) and valid_address(address_entry) \
                 and not isDuplicateCustomer(fName_entry.get(), lName_entry.get(), address_entry.get(), formatted_phone_entry, email_entry.get()):
-            first_name = fName_entry.get()
-            last_name = lName_entry.get()
+            first_name = fName_entry.get().capitalize()
+            last_name = lName_entry.get().capitalize()
             customer_address = address_entry.get()
             customer_phone = formatted_phone_entry
             customer_email = email_entry.get()
         
-            customer_list.insert(tk.END, f"{first_name.capitalize()} - {last_name.capitalize()} - {customer_address} - {customer_phone} - {customer_email}")
+            customer_list.insert(tk.END, f"{first_name} - {last_name} - {customer_address} - {customer_phone} - {customer_email}")
 
             # Update the original_customer_data list
-            original_customer_data.append(f"{first_name.capitalize()} - {last_name.capitalize()} - {customer_address} - {customer_phone} - {customer_email}")
+            original_customer_data.append(f"{first_name} - {last_name} - {customer_address} - {customer_phone} - {customer_email}")
 
             #Add customer to list class object
             CustomerList.add_cust(first_name, last_name, customer_address, customer_phone, customer_email, [])
@@ -279,24 +279,28 @@ def remove_customer():
     customer_info = customer_list.get(selected_index)
     first_name = customer_info.split()[0]
     last_name = customer_info.split()[2]
-    print(last_name)
-    confirmation = messagebox.askokcancel("Confirm Deletion", f"Do you want to remove the customer:\n{first_name} {last_name}")
 
-    # Remove the customer from the original_customer_data list
-    if confirmation:
-        index = 0
-        for i in original_customer_data:
-            if i == customer_info:
-                original_customer_data.pop(index)
-                break
-            index += 1
+    if len(CustomerList.get_cust(first_name, last_name).currentRentals) == 0:
+        confirmation = messagebox.askokcancel("Confirm Deletion", f"Do you want to remove the customer:\n{first_name} {last_name}")
 
-        CustomerList.remove_cust(first_name, last_name)
+        # Remove the customer from the original_customer_data list
+        if confirmation:
+            index = 0
+            for i in original_customer_data:
+                if i == customer_info:
+                    original_customer_data.pop(index)
+                    break
+                index += 1
+
+            CustomerList.remove_cust(first_name, last_name)
         
-        customer_list.delete(selected_index)
+            customer_list.delete(selected_index)
     
-        update_t1_with_customer_list()
-        update_t3_with_customer_list()
+            update_t1_with_customer_list()
+            update_t3_with_customer_list()
+    else:
+        messagebox.showerror("Error", "Cannot remove a customer with a rental. Please return their rented video(s) first.")
+
 
 def edit_customer():
     # Function to be executed when "Edit Customer" button is clicked
@@ -344,8 +348,8 @@ def edit_customer():
         # Get values from entry fields
         if valid_fName(fName_entry) and valid_lName(lName_entry) and valid_phone(formatted_phone_entry) and valid_email(email_entry) and valid_address(address_entry) \
                 and not isDuplicateCustomer(fName_entry.get(), lName_entry.get(), address_entry.get(), formatted_phone_entry, email_entry.get()):
-            edited_first_name = fName_entry.get()
-            edited_last_name = lName_entry.get()
+            edited_first_name = fName_entry.get().capitalize()
+            edited_last_name = lName_entry.get().capitalize()
             edited_address = address_entry.get()
             edited_phone = phone_entry.get()
             edited_email = email_entry.get()
@@ -355,14 +359,14 @@ def edit_customer():
             for i in original_customer_data:
                 if i == customer_info:    
                     original_customer_data.pop(index)
-                    original_customer_data.append( f"{edited_first_name.capitalize()} - {edited_last_name.capitalize()} - {edited_address} - {edited_phone} - {edited_email}")
+                    original_customer_data.append( f"{edited_first_name} - {edited_last_name} - {edited_address} - {edited_phone} - {edited_email}")
                     break
                 index += 1
                 
             CustomerList.edit_cust_info(fName, lName, edited_first_name, edited_last_name, edited_address, edited_phone, edited_email)
             
             customer_list.delete(selected_index)
-            customer_list.insert(tk.END, f"{edited_first_name.capitalize()} - {edited_last_name.capitalize()} - {edited_address} - {edited_phone} - {edited_email}")
+            customer_list.insert(tk.END, f"{edited_first_name} - {edited_last_name} - {edited_address} - {edited_phone} - {edited_email}")
 
             update_t1_with_customer_list()
             update_t3_with_customer_list()
@@ -445,7 +449,7 @@ tk.Button(customer, text="Clear Filter", command=clear_filter).grid(row=5, colum
 tk.Label(video, text="Video Information").grid(row=0, column=0, columnspan=2, pady=5)
 
 #list of videos
-video_list = tk.Listbox(video, width=75, height=20)
+video_list = tk.Listbox(video, width=100, height=20)
 video_list.grid(row=1, column=0, padx=10, pady=5, rowspan=4)
 
 # Original video data (for filtering purposes)
@@ -514,20 +518,25 @@ def remove_video():
 
     video_info = video_list.get(selected_index)
     video_title = video_info.split()[0]
-    confirmation = messagebox.askokcancel("Confirm Deletion", f"Do you want to remove the video:\n{video_title}")
 
-    if confirmation:
-        index = 0
-        for i in original_video_data:
-            if i == video_info:
-                original_video_data.pop(index)
-                break
-            index += 1
+    if InventoryList.get_video(video_title).rentalStatus == "Available":
 
-        InventoryList.remove_video(video_title)
-        video_list.delete(selected_index)
+        confirmation = messagebox.askokcancel("Confirm Deletion", f"Do you want to remove the video:\n{video_title}")
 
-        update_t2_with_video_list()
+        if confirmation:
+            index = 0
+            for i in original_video_data:
+                if i == video_info:
+                    original_video_data.pop(index)
+                    break
+                index += 1
+
+            InventoryList.remove_video(video_title)
+            video_list.delete(selected_index)
+
+            update_t2_with_video_list()
+    else:
+        messagebox.showerror("Error", "Cannot remove a rented video")
 
 def edit_video():
     # Function to be executed when "Edit Video" button is clicked
@@ -686,26 +695,26 @@ def on_scroll(*args):
     t4.yview(*args)
     
 #list of customer name,....
-t1 = tk.Listbox(rental, width=50, height=20, exportselection=False)
+t1 = tk.Listbox(rental, width=80, height=20, exportselection=False)
 t1.pack(side="left")
 t1_scrollbar = tk.Scrollbar(rental, orient="vertical", command=t1.yview)
 t1_scrollbar.pack(side="left", fill="y")
 t1.config(yscrollcommand=t1_scrollbar.set)
 
 #list of video name, curent rental status
-t2=tk.Listbox(rental, width=50, height=20, exportselection=False)
+t2=tk.Listbox(rental, width=80, height=20, exportselection=False)
 t2.pack(side="left")
 t2_scrollbar = tk.Scrollbar(rental, orient="vertical", command=t2.yview)
 t2_scrollbar.pack(side="left", fill="y")
 t2.config(yscrollcommand=t2_scrollbar.set)
 
-t3=tk.Listbox(returnn, width=50, height=20, exportselection=False)
+t3=tk.Listbox(returnn, width=80, height=20, exportselection=False)
 t3.pack(side="left")
 t3_scrollbar = tk.Scrollbar(returnn, orient="vertical", command=t3.yview)
 t3_scrollbar.pack(side="left", fill="y")
 t3.config(yscrollcommand=t3_scrollbar.set)
 
-t4=tk.Listbox(returnn, width=50, height=20, exportselection=False)
+t4=tk.Listbox(returnn, width=80, height=20, exportselection=False)
 t4.pack(side="left")
 t4_scrollbar = tk.Scrollbar(returnn, orient="vertical", command=t4.yview)
 t4_scrollbar.pack(side="left", fill="y")
@@ -746,7 +755,7 @@ def rent_video():
     customer_lName = customer_parts[1]
     customer_rentals = CustomerList.get_cust(customer_fName, customer_lName).currentRentals
 
-    customer_name = f"{customer_fName} - {customer_lName}"
+    customer_name = f"{customer_fName} {customer_lName}"
 
     video_parts = video_selected.split(" - ")
 
@@ -794,7 +803,7 @@ def return_video():
     customer_lName = customer_parts[1]
     customer_rentals = CustomerList.get_cust(customer_fName, customer_lName).currentRentals
 
-    customer_name = f"{customer_fName} - {customer_lName}"
+    customer_name = f"{customer_fName} {customer_lName}"
 
     video_parts = video_selected.split(" - ")
 
