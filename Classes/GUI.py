@@ -606,7 +606,7 @@ def edit_video():
         
             video_list.insert(tk.END, f"{edited_title} - {edited_year} - {edited_director} - {edited_genre} - {edited_rating} - {availability}")
 
-            InventoryList.add_video(title, year, director, rating, genre, availability)
+            InventoryList.add_video(edited_title, edited_year, edited_director, edited_rating, edited_genre, availability)
 
             update_t2_with_video_list()
         
@@ -796,15 +796,16 @@ def rent_video():
     customer_name = f"{customer_fName} {customer_lName}"
 
     video_parts = video_selected.split(" - ")
-
     video_name = video_parts[0]
     video_year = video_parts[1]
     video_director = video_parts[2]
     video_rating = video_parts[4]
     video_genre = video_parts[3]
 
+    # Adds the selected video to the selected customer's currentRentals
     customer_rentals.append(f"{video_name} - {video_year} - {video_director} - {video_genre} - {video_rating} - Rented")
 
+    # Removes the selected video from the GUI and the InventoryList
     index = 0
     for i in original_video_data:
         if i == selected_video_index:
@@ -815,13 +816,15 @@ def rent_video():
 
     InventoryList.remove_video(video_name)
     video_list.delete(selected_video_index)
+
+    # Adds the video back to the inventory, but it is now marked as Rented
     video_list.insert(tk.END, f"{video_name} - {video_year} - {video_director} - {video_genre} - {video_rating} - Rented")
     InventoryList.add_video(video_name, video_year, video_director, video_rating, video_genre, "Rented")
 
+    # Updates the GUI
     update_t1_with_customer_list()
     update_t2_with_video_list()
     update_t3_with_customer_list()
-
 
     messagebox.showinfo("Rental Processed", f"Rented '{video_name}' to {customer_name}")
     
@@ -844,18 +847,19 @@ def return_video():
     customer_name = f"{customer_fName} {customer_lName}"
 
     video_parts = video_selected.split(" - ")
-
     video_name = video_parts[0]
     video_year = video_parts[1]
     video_director = video_parts[2]
     video_rating = video_parts[4]
     video_genre = video_parts[3]
 
+    # Removes the video from the customer's currentRentals
     try:
         customer_rentals.remove(f"{video_name} - {video_year} - {video_director} - {video_genre} - {video_rating} - Rented")
     except:
         print("Video not found in customer's rentals")
 
+    # Removes the video from the GUI and the InventoryList
     index = 0
     for i in original_video_data:
         if i == selected_video_index:
@@ -866,9 +870,12 @@ def return_video():
 
     InventoryList.remove_video(video_name)
     video_list.delete(selected_video_index)
+
+    # Adds the video back to the inventory, but it is now marked as Available
     video_list.insert(tk.END, f"{video_name} - {video_year} - {video_director} - {video_genre} - {video_rating} - Available")
     InventoryList.add_video(video_name, video_year, video_director, video_rating, video_genre, "Available")
 
+    # Updates the GUI
     update_t1_with_customer_list()
     update_t2_with_video_list()
     update_t3_with_customer_list()
