@@ -678,12 +678,51 @@ def vFilter_by():
     # Button to apply the filter
     tk.Button(filter_window, text="Apply Filter", command=vapply_filter).grid(row=2, column=0, columnspan=2, pady=10)
 
+def vSort_by():
+    sort_window = tk.Toplevel(video)
+    sort_window.title("Sort Videos")
+
+    sort_options = ["Title", "Year", "Director", "Genre"]
+    sort_var = tk.StringVar(value=sort_options[0])
+
+    tk.Label(sort_window, text="Select Sort Option:").grid(row=0, column=0, padx=10, pady=5)
+    sort_dropdown = ttk.Combobox(sort_window, values=sort_options, textvariable=sort_var)
+    sort_dropdown.grid(row=0, column=1, padx=10, pady=5)
+
+    # Function to apply the sort
+    def vapply_sort():
+        sort_option = sort_var.get()
+
+        # Sort the video_list based on the selected option
+        video_list.delete(0, tk.END)  # Clear the current listbox
+
+        sorted_data = sorted(original_video_data, key=lambda x: parse_video_info(x)[sort_options.index(sort_option)])
+        for video_info in sorted_data:
+            video_list.insert(tk.END, video_info)
+
+        # Close the sort_window
+        sort_window.destroy()
+
+    # Button to apply the sort
+    tk.Button(sort_window, text="Apply Sort", command=vapply_sort).grid(row=1, column=0, columnspan=2, pady=10)
+
+# Add Sort By Button
+tk.Button(video, text="Sort By", command=vSort_by).grid(row=6, column=1, sticky="ew", padx=10, pady=5)
+
+def clear_sort():
+    video_list.delete(0, tk.END)  # Clear the current listbox
+    for video_info in original_video_data:
+        video_list.insert(tk.END, video_info)
+
+# Add Clear Sort Button
+tk.Button(video, text="Clear Sort", command=clear_sort).grid(row=6, column=2, sticky="ew", padx=10, pady=5)
+
 
 tk.Button(video, text="Add Video", command=add_video).grid(row=1, column=1, sticky="ew", padx=10, pady=5)
 tk.Button(video, text="Remove Video", command=remove_video).grid(row=2, column=1, sticky="ew", padx=10, pady=5)
 tk.Button(video, text="Edit Video", command=edit_video).grid(row=3, column=1, sticky="ew", padx=10, pady=5)
 tk.Button(video, text="Filter By", command=vFilter_by).grid(row=4, column=1, sticky="ew", padx=10, pady=5)
-tk.Button(video, text="Clear Filter", command=clear_filter).grid(row=5, column=1, sticky="ew", padx=10, pady=5)
+tk.Button(video, text="Clear Filter", command=clear_filter).grid(row=4, column=2, sticky="ew", padx=10, pady=5)
 
 # Rental Information label
 tk.Label(rental, text="Start a Rental").pack()
