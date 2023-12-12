@@ -606,7 +606,7 @@ def edit_video():
         
             video_list.insert(tk.END, f"{edited_title} - {edited_year} - {edited_director} - {edited_genre} - {edited_rating} - {availability}")
 
-            InventoryList.add_video(title, year, director, rating, genre, availability)
+            InventoryList.add_video(edited_title, edited_year, edited_director, edited_rating, edited_genre, availability)
 
             update_t2_with_video_list()
         
@@ -678,12 +678,50 @@ def vFilter_by():
     # Button to apply the filter
     tk.Button(filter_window, text="Apply Filter", command=vapply_filter).grid(row=2, column=0, columnspan=2, pady=10)
 
+def vSort_by():
+    sort_window = tk.Toplevel(video)
+    sort_window.title("Sort Videos")
+
+    sort_options = ["Title", "Year", "Director", "Genre"]
+    sort_var = tk.StringVar(value=sort_options[0])
+
+    tk.Label(sort_window, text="Select Sort Option:").grid(row=0, column=0, padx=10, pady=5)
+    sort_dropdown = ttk.Combobox(sort_window, values=sort_options, textvariable=sort_var)
+    sort_dropdown.grid(row=0, column=1, padx=10, pady=5)
+
+    # Function to apply the sort
+    def vapply_sort():
+        sort_option = sort_var.get()
+
+        # Sort the video_list based on the selected option
+        video_list.delete(0, tk.END)  # Clear the current listbox
+
+        sorted_data = sorted(original_video_data, key=lambda x: parse_video_info(x)[sort_options.index(sort_option)])
+        for video_info in sorted_data:
+            video_list.insert(tk.END, video_info)
+
+        # Close the sort_window
+        sort_window.destroy()
+
+    # Button to apply the sort
+    tk.Button(sort_window, text="Apply Sort", command=vapply_sort).grid(row=1, column=0, columnspan=2, pady=10)
+
+# Add Sort By Button
+tk.Button(video, text="Sort By", command=vSort_by).grid(row=6, column=1, sticky="ew", padx=10, pady=5)
+
+def clear_sort():
+    video_list.delete(0, tk.END)  # Clear the current listbox
+    for video_info in original_video_data:
+        video_list.insert(tk.END, video_info)
+
+# Add Clear Sort Button
+tk.Button(video, text="Clear Sort", command=clear_sort).grid(row=6, column=2, sticky="ew", padx=10, pady=5)
 
 tk.Button(video, text="Add Video", command=add_video).grid(row=1, column=1, sticky="ew", padx=10, pady=5)
 tk.Button(video, text="Remove Video", command=remove_video).grid(row=2, column=1, sticky="ew", padx=10, pady=5)
 tk.Button(video, text="Edit Video", command=edit_video).grid(row=3, column=1, sticky="ew", padx=10, pady=5)
 tk.Button(video, text="Filter By", command=vFilter_by).grid(row=4, column=1, sticky="ew", padx=10, pady=5)
-tk.Button(video, text="Clear Filter", command=clear_filter).grid(row=5, column=1, sticky="ew", padx=10, pady=5)
+tk.Button(video, text="Clear Filter", command=clear_filter).grid(row=4, column=2, sticky="ew", padx=10, pady=5)
 
 # Rental Information label
 tk.Label(rental, text="Start a Rental").pack()
@@ -758,15 +796,16 @@ def rent_video():
     customer_name = f"{customer_fName} {customer_lName}"
 
     video_parts = video_selected.split(" - ")
-
     video_name = video_parts[0]
     video_year = video_parts[1]
     video_director = video_parts[2]
     video_rating = video_parts[4]
     video_genre = video_parts[3]
 
+    # Adds the selected video to the selected customer's currentRentals
     customer_rentals.append(f"{video_name} - {video_year} - {video_director} - {video_genre} - {video_rating} - Rented")
 
+    # Removes the selected video from the GUI and the InventoryList
     index = 0
     for i in original_video_data:
         if i == selected_video_index:
@@ -777,13 +816,15 @@ def rent_video():
 
     InventoryList.remove_video(video_name)
     video_list.delete(selected_video_index)
+
+    # Adds the video back to the inventory, but it is now marked as Rented
     video_list.insert(tk.END, f"{video_name} - {video_year} - {video_director} - {video_genre} - {video_rating} - Rented")
     InventoryList.add_video(video_name, video_year, video_director, video_rating, video_genre, "Rented")
 
+    # Updates the GUI
     update_t1_with_customer_list()
     update_t2_with_video_list()
     update_t3_with_customer_list()
-
 
     messagebox.showinfo("Rental Processed", f"Rented '{video_name}' to {customer_name}")
     
@@ -806,18 +847,19 @@ def return_video():
     customer_name = f"{customer_fName} {customer_lName}"
 
     video_parts = video_selected.split(" - ")
-
     video_name = video_parts[0]
     video_year = video_parts[1]
     video_director = video_parts[2]
     video_rating = video_parts[4]
     video_genre = video_parts[3]
 
+    # Removes the video from the customer's currentRentals
     try:
         customer_rentals.remove(f"{video_name} - {video_year} - {video_director} - {video_genre} - {video_rating} - Rented")
     except:
         print("Video not found in customer's rentals")
 
+    # Removes the video from the GUI and the InventoryList
     index = 0
     for i in original_video_data:
         if i == selected_video_index:
@@ -828,9 +870,12 @@ def return_video():
 
     InventoryList.remove_video(video_name)
     video_list.delete(selected_video_index)
+
+    # Adds the video back to the inventory, but it is now marked as Available
     video_list.insert(tk.END, f"{video_name} - {video_year} - {video_director} - {video_genre} - {video_rating} - Available")
     InventoryList.add_video(video_name, video_year, video_director, video_rating, video_genre, "Available")
 
+    # Updates the GUI
     update_t1_with_customer_list()
     update_t2_with_video_list()
     update_t3_with_customer_list()
