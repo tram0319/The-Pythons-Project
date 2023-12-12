@@ -517,7 +517,7 @@ def remove_video():
     selected_index = selected_indices[0]
 
     video_info = video_list.get(selected_index)
-    video_title = video_info.split()[0]
+    video_title = video_info.split(" - ")[0]
 
     if InventoryList.get_video(video_title).rentalStatus == "Available":
 
